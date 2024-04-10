@@ -1,12 +1,12 @@
 {
   "site": {
-    "title": "Bigspring Light Nextjs",
+    "title": "Metri",
     "base_url": "/",
-    "favicon": "/images/favicon.png",
-    "logo": "/images/logo.png",
-    "logo_width": "200",
-    "logo_height": "48",
-    "logo_text": "Bigspring Light"
+    "favicon": "/images/favicon-16x16.png",
+    "logo": "/images/Metri.png",
+    "logo_width": "44",
+    "logo_height": "44",
+    "logo_text": "Metri"
   },
 
   "settings": {
@@ -17,8 +17,8 @@
 
   "nav_button": {
     "enable": true,
-    "label": "Get Started",
-    "link": "/contact"
+    "label": "Buy Metri",
+    "link": "/login"
   },
 
   "params": {

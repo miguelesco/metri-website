@@ -1,8 +1,8 @@
 ---
 banner:
-  title: Let us solve your critical website development challenges
-  content: Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam nihil enim maxime corporis cumque <br/> totam aliquid nam sint inventore optio modi neque laborum officiis necessitatibus
-  image: /images/banner-art.svg
+  title: Be part of the construction of the largest private calibration laboratory in Latin America
+  content: Join Metri in shaping Latin America's premier metrology lab. Invest in a future where every Metri transaction enhances scientific progress. Embrace innovation with Metri.
+  image: /images/lab.png
   button:
     label: "Contact Us"
     link: "/contact"
@@ -11,24 +11,24 @@ banner:
 feature: 
   title: Something You Need To Know
   features:
-  - name: "Clean Code"
+  - name: "Building Blocks"
     icon: "/images/code.svg"
-    content: "Lorem ipsum dolor sit amet consectetur adipisicing elit quam nihil"
-  - name: "Object Oriented"
+    content: "Metri is not just building labs; we're laying the foundations for innovation."
+  - name: "Tokenomics Triumph"
     icon: "/images/oop.svg"
-    content: "Lorem ipsum dolor sit amet consectetur adipisicing elit quam nihil"
-  - name: "24h Service"
+    content: "It's an opportunity to be part of a pioneering venture that promises profitability while contributing to scientific progress."
+  - name: "Solana-Powered Speed"
     icon: "/images/user-clock.svg"
-    content: "Lorem ipsum dolor sit amet consectetur adipisicing elit quam nihil"
-  - name: "Value for Money"
+    content: "By operating on the Solana network, Metri offers unmatched transactional efficiency."
+  - name: "Holder Rewards"
     icon: "/images/love.svg"
-    content: "Lorem ipsum dolor sit amet consectetur adipisicing elit quam nihil"
-  - name: "Faster Response"
+    content: "Metri rewards your loyalty. Holding our token means you'll reap ongoing rewards."
+  - name: "Precision & Profitability"
     icon: "/images/speedometer.svg"
-    content: "Lorem ipsum dolor sit amet consectetur adipisicing elit quam nihil"
-  - name: "Cloud Support"
+    content: "Invest in a currency that offers more."
+  - name: "Cloud Connectivity"
     icon: "/images/cloud.svg"
-    content: "Lorem ipsum dolor sit amet consectetur adipisicing elit quam nihil"
+    content: "Our cloud infrastructure supports the ambitious goal of building state-of-the-art labs."
 
 # services
 services:
