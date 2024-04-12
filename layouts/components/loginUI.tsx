@@ -1,15 +1,14 @@
 import React, { useState } from "react";
-import { register } from "@lib/firebase/config";
 
-const Login = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+interface LoginProps {
+    email: string;
+    setEmail: React.Dispatch<React.SetStateAction<string>>;
+    password: string;
+    setPassword: React.Dispatch<React.SetStateAction<string>>;
+    handleLogin: () => void;
+}
 
-    const handleLogin = () => {
-        // Execute your login logic here
-        // You can access the email and password variables here
-        register(email, password);
-    };
+const Login: React.FC<LoginProps> = ({ handleLogin, email, setEmail, setPassword, password }) => {
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -30,7 +29,7 @@ const Login = () => {
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             id="email"
                             placeholder="Email"
-                            required=""
+                            required
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -46,7 +45,7 @@ const Login = () => {
                         <input
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                             id="password"
-                            required=""
+                            required
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}

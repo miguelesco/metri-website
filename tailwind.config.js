@@ -28,6 +28,8 @@ module.exports = {
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./layouts/**/*.{js,ts,jsx,tsx}",
     "./content/**/*.{md,mdx}",
+    "./node_modules/flowbite/**/*.js",
+    './node_modules/flowbite-react/lib/esm/**/*.js',
   ],
   theme: {
     screens: {
@@ -72,6 +74,7 @@ module.exports = {
   },
   plugins: [
     require("@tailwindcss/typography"),
+    require('flowbite/plugin'),
     require("@tailwindcss/forms"),
     require("tailwind-bootstrap-grid")({ generateContainer: false }),
   ],

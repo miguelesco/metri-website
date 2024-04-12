@@ -7,6 +7,16 @@ banner:
     label: "Contact Us"
     link: "/contact"
 
+#sidebar
+sidebar: 
+  title: Metri
+  icon: /images/lab.png
+  options: 
+  - name: "Buy Metri"
+    icon: HiChartPie
+  - name: "Sign out"
+    icon: HiTable
+
 # feature
 feature: 
   title: Something You Need To Know
