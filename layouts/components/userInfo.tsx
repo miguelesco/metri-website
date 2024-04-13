@@ -2,81 +2,46 @@ import Image from "next/image";
 import Watch from "./watch";
 import { getUserInfo } from "@lib/firebase/config";
 import { useEffect, useState } from "react";
+import ChartComponent from "./chart";
+import ApexCharts from "apexcharts";
 
-export default function UserInfo() {
+interface UserInfoProps {
+	chartOptions : ApexCharts.ApexOptions;
+}
 
-	const [user , setUser] = useState(null);
+const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
+
+	const [user , setUser] = useState<any>(null);
+	const [supply, setSupply] = useState<number>(5000000);
+	const [soldTokens, setSoldTokens] = useState<number>(2000000);
+	const [daysLeft, setDaysLeft] = useState<number>(12);
+	const [porcentage, setPorcentage] = useState<string>();
+
+	console.log(porcentage, 'porcentage')
 
 	useEffect(() => {
 		const user = getUserInfo();
+		console.log(user)
 		setUser(user);
-	} , []);
+		setPorcentage(((soldTokens / supply) * 100).toFixed(0).toString() + '%')
+	} , [soldTokens, supply]);
 
     return (
         <div
-				className="bg-white h-full rounded-3xl p-8 w-full grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3 xl:gap-8 md:col-start-2 md:row-start-2"
+				className="bg-white h-full rounded-3xl p-8 w-full grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-5 xl:gap-8 md:col-start-2 md:row-start-2"
 			>
-				<header className="space-y-8">
+				<section className="space-y-8 ">
 					<h2 className="font-semibold text-xl sm:text-2xl">Dashboard</h2>
 					
 					<Watch user={user}/>
-				</header>
-				<section className="space-y-8">
-					<h2 className="font-semibold text-xl sm:text-2xl">Upcoming Payments</h2>
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-						<div
-							className="bg-gray-100 rounded-3xl p-6 flex flex-col items-center space-y-2"
-						>
-							<div
-								className="bg-gray-900 rounded-3xl flex items-center justify-center p-4 w-20"
-							>
-								<svg
-									className="stroke-1 h-10 w-10 text-white"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-									/>
-								</svg>
-							</div>
-							<h4 className="text-gray-800 font-bold text-xl sm:text-xl">Salary</h4>
-							<p className="text-sm text-gray-500">Belong Interactive</p>
-							<p className="text-gray-800 font-bold text-xl sm:text-xl">+$2,000</p>
-						</div>
-						<div
-							className="bg-gray-100 rounded-3xl p-6 flex flex-col items-center space-y-2"
-						>
-							<div
-								className="bg-gray-900 rounded-3xl flex items-center justify-center p-4 w-20"
-							>
-								<svg
-									className="stroke-1 h-10 w-10 text-white"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-									/>
-								</svg>
-							</div>
-							<h4 className="text-gray-800 font-bold text-xl sm:text-xl">Paypal</h4>
-							<p className="text-sm text-gray-500">Freelancer</p>
-							<p className="text-gray-800 font-bold text-xl sm:text-xl">+$45.75</p>
-						</div>
+				</section>
+				<section className="space-y-8 xl:col-span-3 xl:col-start-2 xl:row-start-1">
+					<h2 className="font-semibold text-xl sm:text-2xl">Goal</h2>
+					<div className="grid grid-cols-1  gap-4">
+						<ChartComponent options={chartOptions} />
 					</div>
 				</section>
-				<section className="md:col-span-2 flex flex-col space-y-8 xl:col-span-2">
+				<section className="md:col-span-2 flex flex-col space-y-8 xl:col-span-2 mt-5">
 					<h2 className="font-semibold text-xl sm:text-2xl">Recent Transactions</h2>
                 <table className="w-full" cellPadding={0} border={0}>
 						<tbody className="divide-y w-full md:table-row-group space-y-4">
@@ -215,7 +180,7 @@ export default function UserInfo() {
 					</table>
 				</section>
 				<section
-					className="bg-gray-100 rounded-3xl overflow-hidden xl:col-start-3 xl:row-span-3 xl:row-start-1"
+					className="bg-gray-100 rounded-3xl overflow-hidden xl:col-start-4 xl:row-span-5 xl:row-start-1"
 				>
 					<div className="flex flex-col space-y-8 h-full py-8">
 						<header className="text-center">
@@ -335,7 +300,7 @@ export default function UserInfo() {
 										className="bg-gray-300 absolute inset-0 transform -translate-y-4 rounded-2xl opacity-75 scale-95"
 									></div>
 									<div
-										className="bg-gray-900 p-4 rounded-xl flex space-x-4 shadow-md relative w-full items-center"
+										className="bg-[#0AA8A7] p-4 rounded-xl flex space-x-4 shadow-md relative w-full items-center"
 									>
 										<div
 											className="flex flex-col items-center justify-center flex-grow"
@@ -383,3 +348,5 @@ export default function UserInfo() {
 			</div> 
     )
 }
+
+export default UserInfo;

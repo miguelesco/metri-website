@@ -74,7 +74,9 @@ module.exports = {
   },
   plugins: [
     require("@tailwindcss/typography"),
-    require('flowbite/plugin'),
+    require('flowbite/plugin')({
+      charts: true,
+    }),
     require("@tailwindcss/forms"),
     require("tailwind-bootstrap-grid")({ generateContainer: false }),
   ],

@@ -12,6 +12,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "apexcharts": "^3.48.0",
     "firebase": "^10.10.0",
     "flowbite": "^2.3.0",
     "flowbite-react": "^0.8.0",
@@ -21,6 +22,7 @@
     "next": "13.0.6",
     "next-mdx-remote": "^4.2.0",
     "react": "18.2.0",
+    "react-apexcharts": "^1.4.1",
     "react-dom": "18.2.0",
     "react-gtm-module": "^2.0.11",
     "react-icons": "^4.7.1",
@@ -39,8 +41,8 @@
     "eslint-config-next": "13.0.6",
     "jshint": "^2.13.6",
     "postcss": "^8.4.19",
-    "prettier": "^2.8.1",
-    "prettier-plugin-tailwindcss": "^0.2.1",
+    "prettier": "^2.8.8",
+    "prettier-plugin-tailwindcss": "^0.2.8",
     "sass": "^1.56.2",
     "sharp": "^0.31.2",
     "tailwind-bootstrap-grid": "^5.0.1",
