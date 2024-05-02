@@ -60,17 +60,20 @@ export default function UserDashboard() {
         xaxis: {
           categories: ['1 stage', '2 stage'],
           labels: {
-            show: false,
+            show: true,
           },
           axisBorder: {
             show: false,
           },
           axisTicks: {
-            show: false,
+            show: true,
           },
         },
         yaxis: {
-          show: false,
+          show: true,
+          labels: {
+            show: true,
+          }
         },
       },
     };

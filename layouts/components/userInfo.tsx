@@ -4,6 +4,7 @@ import { getUserInfo } from "@lib/firebase/config";
 import { useEffect, useState } from "react";
 import ChartComponent from "./chart";
 import ApexCharts from "apexcharts";
+import Timeline from "./Timeline";
 
 interface UserInfoProps {
 	chartOptions : ApexCharts.ApexOptions;
@@ -45,166 +46,8 @@ const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
 					className="bg-gray-100 rounded-3xl overflow-hidden xl:basis-2/6 lg:basis-2/4 flex-auto lg:order-last 2xl:-order-none"
 				>
 					<div className="flex flex-col space-y-8 h-full py-8">
-						<header className="text-center">
-							<h3
-								className="text-gray-500 font-medium text-lg sm:text-lg tracking-tight"
-							>
-								Saved This Month
-							</h3>
-							<p className="py-4 font-semibold text-xl sm:text-2xl">$25,999.00</p>
-						</header>
-						<nav className="flex items-center w-full justify-center">
-							<ul className="flex space-x-6">
-								<li>
-									<button
-										className="font-medium text-gray-400 hover:bg-gray-200 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-									>
-										Day
-									</button>
-								</li>
-								<li>
-									<button
-										className="font-medium text-gray-400 hover:bg-gray-200 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-									>
-										Week
-									</button>
-								</li>
-								<li>
-									<button
-										className="font-medium px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-									>
-										Month
-									</button>
-								</li>
-								<li>
-									<button
-										className="font-medium text-gray-400 hover:bg-gray-200 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-									>
-										Year
-									</button>
-								</li>
-							</ul>
-						</nav>
-						<div
-							className="flex flex-col flex-1 flex-grow justify-start items-center space-y-8"
-						>
-							<div className="relative w-full">
-								<div className="overflow-y-visible overflow-x-scroll">
-									<canvas id="myChart" width="500" height="200"></canvas>
-								</div>
-							</div>
+					<Timeline/>
 
-                            <div
-                                className="flex items-center justify-center overflow-y-visible overflow-x-auto w-full mx-auto pb-4 pt-4"
-                                style={{ scrollSnapType: 'x mandatory' }}
-                            >
-								<ul className="flex space-x-8 whitespace-nowrap">
-									<li>
-										<button
-											className="font-medium text-gray-400 hover:bg-gray-300 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-										>
-											May
-										</button>
-									</li>
-									<li>
-										<button
-											className="font-medium text-gray-400 hover:bg-gray-300 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-										>
-											Jun
-										</button>
-									</li>
-									<li>
-										<button
-											className="font-medium text-gray-400 hover:bg-gray-300 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-										>
-											July
-										</button>
-									</li>
-									<li>
-										<button
-											className="font-medium text-gray-400 hover:bg-gray-300 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-										>
-											Aug
-										</button>
-									</li>
-									<li>
-										<button
-											className="font-medium text-gray-400 hover:bg-gray-300 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-										>
-											Sep
-										</button>
-									</li>
-									<li>
-										<button
-											className="font-medium text-white px-2 py-1 bg-black rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-										>
-											Oct
-										</button>
-									</li>
-									<li>
-										<button
-											className="font-medium text-gray-400 hover:bg-gray-300 px-2 py-1 rounded-full focus:outline-none focus:ring-2 focus:ring-black"
-										>
-											Nov
-										</button>
-									</li>
-								</ul>
-							</div>
-							<div className="max-w-lg w-full px-4">
-								<div className="relative mt-12 w-full">
-									<div
-										className="bg-gray-300 absolute inset-0 transform -translate-y-12 rounded-2xl opacity-20 scale-75"
-									></div>
-									<div
-										className="bg-gray-300 absolute inset-0 transform -translate-y-8 rounded-2xl opacity-25 scale-90"
-									></div>
-									<div
-										className="bg-gray-300 absolute inset-0 transform -translate-y-4 rounded-2xl opacity-75 scale-95"
-									></div>
-									<div
-										className="bg-[#0AA8A7] p-4 rounded-xl flex space-x-4 shadow-md relative w-full items-center"
-									>
-										<div
-											className="flex flex-col items-center justify-center flex-grow"
-										>
-											<h4 className="text-gray-300 text-lg opacity-50">
-												Plan for 2020
-											</h4>
-											<p className="text-gray-100 text-lg sm:text-xl md:text-2xl">
-												Completed
-											</p>
-										</div>
-										<div
-											className="flex items-center justify-center flex-shrink-0 flex-grow"
-										>
-											<svg
-												className="h-24 w-24 text-2xl text-white"
-												viewBox="0 0 100 100"
-												xmlns="http://www.w3.org/2000/svg"
-											>
-												<circle
-													cx="50"
-													cy="50"
-													r="44"
-													fill="transparent"
-													stroke="currentColor"
-													strokeWidth="12"
-												/>
-												<text
-													x="50%"
-													y="50%"
-													textAnchor="middle"
-													fill="currentColor"
-													dy=".3em"
-												>
-													75%
-												</text>
-											</svg>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
 					</div>
 				</section>
 				<section className="flex-none flex flex-col space-y-8 mt-5 2xl:relative 2xl:bottom-[291px] 2xl:w-[830px]">
@@ -344,7 +187,7 @@ const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
 							</tr>
 						</tbody>
 					</table>
-				</section>
+				</section> 
 				
 			</div> 
     )
