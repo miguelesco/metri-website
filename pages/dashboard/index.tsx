@@ -1,9 +1,10 @@
 import Sidebar from "@components/sidebar";
 import UserInfo from "@components/userInfo";
+import { NextPageWithLayout } from "@layouts/Baseof";
 import dynamic from "next/dynamic";
 const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-export default function UserDashboard() { 
+const UserDashboard: NextPageWithLayout = () => { 
   
 
     const chartOptions: typeof ApexChart.defaultProps = {
@@ -79,15 +80,21 @@ export default function UserDashboard() {
     };
 
     return (
-        <div className="bg-white ">
-			<Sidebar 
-				
-			>
-			<UserInfo chartOptions={chartOptions}/>
-			</Sidebar>
-			
-        </div>
+      <div className="bg-white ">
+        <UserInfo chartOptions={chartOptions}/>
+      </div>
 
         
     )
 };
+
+UserDashboard.getLayout = (page) => {
+    return (
+        <Sidebar>
+            {page}
+        </Sidebar>
+    )
+}
+
+export default UserDashboard;
+

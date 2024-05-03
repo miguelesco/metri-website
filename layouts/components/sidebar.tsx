@@ -23,7 +23,7 @@ export default function SidebarComponent({ children }: { children: React.ReactNo
 
     const [menuItems, setMenuItems] = useState<{ title: string, url: string, icon: React.FC<React.SVGProps<SVGSVGElement>> }[]>([
       { title: "Dashboard", url: '/dashboard', icon: HiChartPie },
-      { title: "Buy Metri", url: '/users', icon: FaDollarSign },
+      { title: "Buy Metri", url: 'dashboard/buy', icon: FaDollarSign },
     ]);
 
     const [menuDropdownItems, setMenuDropdownItems] = useState<{ title: string, open: boolean, elements: {title: string, url: string, icon: React.FC<React.SVGProps<SVGSVGElement>> | undefined }[] }[]>([
