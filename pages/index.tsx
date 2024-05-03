@@ -1,5 +1,5 @@
 import config from "@config/config.json";
-import Base from "@layouts/Baseof";
+import Base, { NextPageWithLayout } from "@layouts/Baseof";
 import Cta from "@layouts/components/Cta";
 import { markdownify } from "@lib/utils/textConverter";
 import Image from "next/image";
@@ -8,13 +8,62 @@ import { Autoplay, Pagination } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper.min.css";
 import { getListPage } from "../lib/contentParser";
+import { ReactElement } from "react";
 
-const Home = ({ frontmatter }) => {
+interface HomeProps {
+  frontmatter: {
+    banner: {
+      title: string;
+      content: string;
+      button: {
+        enable: boolean;
+        label: string;
+        link: string;
+        rel: string;
+      };
+      image: string;
+    };
+    feature: {
+      title: string;
+      features: {
+        icon: string;
+        name: string;
+        content: string;
+      }[];
+    };
+    services: {
+      title: string;
+      content: string;
+      button: {
+        enable: boolean;
+        label: string;
+        link: string;
+      };
+      images: string[];
+    }[];
+    workflow: {
+      title: string;
+      description: string;
+      image: string;
+    };
+    call_to_action: {
+      title: string;
+      content: string;
+      button: {
+        enable: boolean;
+        label: string;
+        link: string;
+      };
+    };
+  };
+}
+
+const Home: NextPageWithLayout< HomeProps > = ({ frontmatter })  => {
   const { banner, feature, services, workflow, call_to_action } = frontmatter;
-  const { title } = config.site;
+
 
   return (
-    <Base title={title}>
+    <>
       {/* Banner */}
       <section className="section pb-[50px]">
         <div className="container">
@@ -97,7 +146,7 @@ const Home = ({ frontmatter }) => {
                       delay: 5000,
                       disableOnInteraction: false,
                     }}
-                    init={service?.images > 1 ? false : true}
+                    init={service?.images.length > 1 ? false : true}
                   >
                     {/* Slides */}
                     {service?.images.map((slide, index) => (
@@ -158,9 +207,18 @@ const Home = ({ frontmatter }) => {
 
       {/* Cta */}
       <Cta cta={call_to_action} />
-    </Base>
+    </>
   );
 };
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  const { title } = config.site;
+  return (
+    <Base title={title}>
+      {page}
+    </Base>
+  )
+}
 
 export const getStaticProps = async () => {
   const homePage = await getListPage("content/_index.md");

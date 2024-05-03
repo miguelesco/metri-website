@@ -2,10 +2,26 @@ import config from "@config/config.json";
 import { plainify } from "@lib/utils/textConverter";
 import Footer from "@partials/Footer";
 import Header from "@partials/Header";
+import { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { ReactElement, ReactNode } from "react";
 
-const Base = ({
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+export type BaseProps = {
+  title?: string;
+  meta_title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+  canonical?: string;
+  children: ReactNode;
+}
+
+const Base: React.FC<BaseProps> = ({
   title,
   meta_title,
   description,

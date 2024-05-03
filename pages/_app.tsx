@@ -1,11 +1,17 @@
 import config from "@config/config.json";
 import theme from "@config/theme.json";
+import { NextPageWithLayout } from "@layouts/Baseof";
+import { AppProps } from "next/app";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import TagManager from "react-gtm-module";
 import "styles/style.scss";
 
-const App = ({ Component, pageProps }) => {
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   // default theme setup
 
   // import google font css
@@ -33,6 +39,8 @@ const App = ({ Component, pageProps }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getLayout = Component.getLayout ?? ((page) => page)
+
   return (
     <>
       <Head>
@@ -40,7 +48,7 @@ const App = ({ Component, pageProps }) => {
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
-          crossOrigin="true"
+          crossOrigin={"anonymous"}
         />
         <style
           dangerouslySetInnerHTML={{
@@ -53,7 +61,7 @@ const App = ({ Component, pageProps }) => {
           content="width=device-width, initial-scale=1, maximum-scale=5"
         />
       </Head>
-      <Component {...pageProps} />
+      {getLayout(<Component {...pageProps} />)}
     </>
   );
 };

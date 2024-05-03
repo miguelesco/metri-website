@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import { Sidebar } from 'flowbite-react';
 import config from "@config/config.json";
-import { HiArrowSmRight, HiCalendar, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards } from 'react-icons/hi';
+import { FaDollarSign } from "react-icons/fa";
+import { HiArrowSmRight, HiCalendar, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards,  } from 'react-icons/hi';
 import router from "next/router";
 import React from "react";
 import Image from "next/image";
@@ -22,7 +23,7 @@ export default function SidebarComponent({ children }: { children: React.ReactNo
 
     const [menuItems, setMenuItems] = useState<{ title: string, url: string, icon: React.FC<React.SVGProps<SVGSVGElement>> }[]>([
       { title: "Dashboard", url: '/dashboard', icon: HiChartPie },
-      { title: "Buy Metri", url: '/users', icon: HiUser },
+      { title: "Buy Metri", url: '/users', icon: FaDollarSign },
     ]);
 
     const [menuDropdownItems, setMenuDropdownItems] = useState<{ title: string, open: boolean, elements: {title: string, url: string, icon: React.FC<React.SVGProps<SVGSVGElement>> | undefined }[] }[]>([
