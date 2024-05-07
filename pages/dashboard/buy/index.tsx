@@ -1,13 +1,14 @@
 import { NextPageWithLayout } from "@layouts/Baseof";
 import Sidebar from "@layouts/components/sidebar";
-import { Button, Card, CustomFlowbiteTheme, Select, Tabs, Label } from "flowbite-react";
-import { useState, useEffect } from "react";
+import { Button, Card, CustomFlowbiteTheme, Select, Tabs, Label, Modal, ModalProps } from "flowbite-react";
+import { useState, useEffect, SetStateAction, Dispatch } from "react";
 import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
 import { MdDashboard } from "react-icons/md";
 import { BiSolidDollarCircle,BiLogoBitcoin } from "react-icons/bi";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaArrowDown, FaArrowRight } from "react-icons/fa";
-import { FcDonate } from "react-icons/fc";
+import { TbCurrencySolana, TbCurrencyBitcoin,TbCurrencyEthereum } from "react-icons/tb";
+import { CiBank } from "react-icons/ci";
 import { TbCurrencyPeso } from "react-icons/tb";
 import Image from "next/image";
 
@@ -56,6 +57,7 @@ const BuyPage: NextPageWithLayout = () => {
 }
 
 const CoinTransfer = () => {
+    const [openModal, setOpenModal] = useState(false)
     const [openCoinDropdown, setOpenCoinDropdown] = useState(false)
     const [amountToBuy, setAmountToBuy] = useState<string>('')
     const [amountInMTR, setAmountInMTR] = useState<string>('')
@@ -123,7 +125,8 @@ const CoinTransfer = () => {
 
     return (
             
-                
+    <div>
+
         <form className="w-full mx-auto ">
             <div className="space-x-0 space-y-4 rtl:space-x-reverse flex items-center flex-col mb-4">
                 <div className="flex relative sm:h-16 sm:w-2/3">
@@ -174,20 +177,96 @@ const CoinTransfer = () => {
                     </svg>
                 </button>
             </div> */}
-            <div className=" space-x-0  rtl:space-x-reverse flex items-center flex-col mb-4 mt-20">
-            <button className="border text-gray-50  duration-300 relative group cursor-pointer   overflow-hidden h-16 w-48 rounded-md bg-neutral-800 p-2  font-extrabold hover:bg-sky-700">
-                <div className="absolute group-hover:-top-1 group-hover:-right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150  duration-700 right-12 top-12 bg-yellow-500"></div>
-                <div className="absolute group-hover:-top-1 group-hover:-right-2 z-10 w-12 h-12 rounded-full group-hover:scale-150  duration-700 right-20 -top-6 bg-orange-500"></div>
-                <div className="absolute group-hover:-top-1 group-hover:-right-2 z-10 w-8 h-8   rounded-full group-hover:scale-150  duration-700 right-32 top-6 bg-pink-500"></div>
-                <div className="absolute group-hover:-top-1 group-hover:-right-2 z-10 w-4 h-4   rounded-full group-hover:scale-150  duration-700 right-2 top-12 bg-red-600"></div>
-                <p className="z-10 absolute bottom-2 left-2">Pay with</p>
-            </button>
-            </div>
         </form>
+        <div className=" space-x-0  rtl:space-x-reverse flex items-center flex-col mb-4 mt-20">
+            <button onClick={() => setOpenModal(true)} className=" text-gray-50  duration-300 relative group cursor-pointer   overflow-hidden h-16 w-48 rounded-md bg-lightGreen opacity-90 p-2  font-extrabold hover:bg-orange">
+                <div className="absolute justify-center items-center flex group-hover:-top-1 group-hover:-right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150  duration-700 right-12 top-12 bg-[#268f8f] opacity-40">
+                    <CiBank/>
+                </div>
+                <div className="absolute  group-hover:-top-1 group-hover:-right-2 z-10 w-12 h-12 rounded-full group-hover:scale-150  duration-700 right-20 -top-6 bg-orange-500">
+                </div>
+                <div className="absolute justify-center items-center flex group-hover:-top-1 group-hover:-right-2 z-10 w-8 h-8   rounded-full group-hover:scale-150  duration-700 right-32 top-1 bg-[#268f8f] opacity-70">
+                    <TbCurrencySolana/>
+                </div>
+                <div className="absolute justify-center items-center flex group-hover:-top-1 group-hover:-right-2 z-10 w-5 h-5   rounded-full group-hover:scale-150  duration-700 right-2 top-12 bg-[#268f8f] ">
+                    <TbCurrencyBitcoin/>
+                </div>
+                <p className="z-10 absolute bottom-2 left-2" >Buy Metri</p>
+            </button>
+        </div>
+        <BuyModal openModal={openModal} setOpenModal={setOpenModal}/>
+    </div>
 
 
     )
 } 
+
+const BuyModal: React.FC<{openModal: boolean, setOpenModal: Dispatch<SetStateAction<boolean>>}> = ({openModal, setOpenModal}) => {
+    enum typeOfPaymentEnum {
+        BANK = 'bank',
+        BTC = 'btc',
+        SOL = 'sol',
+        ETH = 'eth'
+    }
+    const [modalPlacement, setModalPlacement] = useState<ModalProps['position']>('center')
+    const [typeOfPayment, setTypeOfPayment] = useState<typeOfPaymentEnum | undefined>()
+
+    const handlePaymentType = (type: typeOfPaymentEnum) => {
+        setTypeOfPayment(type)
+    }
+
+    return (
+        <Modal
+        show={openModal}
+        position={modalPlacement}
+        size={'md'}
+        theme={{
+            root: {
+                show: {
+                    on: "flex bg-gray-900 bg-opacity-50 dark:bg-opacity-80",
+                }
+            }
+        }}
+        onClose={() => setOpenModal(false)}
+    >
+        <Modal.Header>
+          <h2 className="text-lg font-semibold">Buy Metri</h2>
+        </Modal.Header>
+        <Modal.Body>
+        <div className="flex flex-col justify-start gap-6">
+            <div>
+                <p>Fiat payment</p>
+                <button onClick={() => handlePaymentType(typeOfPaymentEnum.BANK)} className="flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]">
+                    <CiBank className="w-8 h-8"/>
+                    Bank Transfer
+                </button>
+            </div>
+            <div >
+                <p>Crypto Payment</p>
+                <button  onClick={() => handlePaymentType(typeOfPaymentEnum.BTC)} className="flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]">
+                    <TbCurrencyBitcoin className="w-8 h-8"/>
+                    Bitcoin
+                </button>
+                <button onClick={() => handlePaymentType(typeOfPaymentEnum.SOL)} className="flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]">
+                    <TbCurrencySolana className="w-8 h-8"/>
+                    Solana
+                </button>
+                <button onClick={() => handlePaymentType(typeOfPaymentEnum.ETH)} className="flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]">
+                    <TbCurrencyEthereum className="w-8 h-8"/>
+                    Ethereum
+                </button>
+            </div>
+        </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="text-base bg-orange w-full items-center appearance-none border-b-gray-800 rounded-bl-lg rounded-br-lg border-l-gray-800 border-l-0 border-r-gray-800 border-r-0 border-t-gray-800 rounded-tl-lg rounded-tr-lg box-border text-gray-800 space-x-1.5 cursor-pointer flex text-base font-medium h-12 justify-center leading-6 mb-0 ml-0 mr-0 mt-0 min-h-12 min-w-20 outline-none overflow-x-hidden overflow-y-hidden pb-0 pl-4 pr-4 pt-0 space-y-1.5 text-center no-underline overflow-ellipsis whitespace-nowrap select-none break-all">
+            Confirm
+          </button>
+        </Modal.Footer>
+    </Modal>
+    )
+}
+
 BuyPage.getLayout = (page) => {
     return (
         <Sidebar>
