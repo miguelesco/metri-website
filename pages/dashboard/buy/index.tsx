@@ -1,4 +1,5 @@
 import { NextPageWithLayout } from "@layouts/Baseof";
+import axios from 'axios';
 import Sidebar from "@layouts/components/sidebar";
 import { Button, Card, CustomFlowbiteTheme, Select, Tabs, Label, Modal, ModalProps } from "flowbite-react";
 import { useState, useEffect, SetStateAction, Dispatch } from "react";
@@ -6,8 +7,8 @@ import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
 import { MdDashboard } from "react-icons/md";
 import { BiSolidDollarCircle,BiLogoBitcoin } from "react-icons/bi";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { FaArrowDown, FaArrowRight } from "react-icons/fa";
-import { TbCurrencySolana, TbCurrencyBitcoin,TbCurrencyEthereum } from "react-icons/tb";
+import { FaArrowDown, FaArrowLeft } from "react-icons/fa";
+import { TbCurrencySolana, TbCurrencyBitcoin,TbCurrencyEthereum, TbBrandBinance } from "react-icons/tb";
 import { CiBank } from "react-icons/ci";
 import { TbCurrencyPeso } from "react-icons/tb";
 import Image from "next/image";
@@ -17,6 +18,14 @@ interface Coin {
     icon: JSX.Element;
     value: string;
     rate: number;
+}
+
+interface CryptoPrice {
+    initialPrices?: {
+        binancecoin: {usd: number};
+        bitcoin: {usd: number}
+        ethereum: {usd: number}
+    }
 }
 
 
@@ -39,7 +48,29 @@ const tabsTheme: CustomFlowbiteTheme["tabs"] = {
     tabpanel: 'bg-darkGreen text-white sm:p-8 p-4 w-full rounded-b-lg'
   };
 
-const BuyPage: NextPageWithLayout = () => {
+
+  
+export async function getServerSideProps() {
+    try {
+      const response = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
+        params: {
+          ids: 'bitcoin,binancecoin,ethereum',
+          vs_currencies: 'usd'
+        }
+      });
+      return {
+        props: { initialPrices: response.data }
+      };
+    } catch (error) {
+      console.error('Failed to fetch data', error);
+      return { props: { initialPrices: {} } };
+    }
+  }
+  
+
+const BuyPage: NextPageWithLayout<CryptoPrice> = ({ initialPrices }) => {
+    const [prices, setPrices] = useState<CryptoPrice['initialPrices']>(initialPrices);
+
     return (
         <Card className="max-w-xl p-0" theme={{
             root: {
@@ -48,7 +79,7 @@ const BuyPage: NextPageWithLayout = () => {
         }}>
             <Tabs aria-label="Default tabs" className="p-0 justify-center border-b-0" style={'default'} theme={tabsTheme}>
                 <Tabs.Item active={true} title="Buy" icon={HiUserCircle} className="text-white">
-                    <CoinTransfer />
+                    <CoinTransfer setPrices={setPrices} prices={prices} />
                 </Tabs.Item>
                 <Tabs.Item title="Sell (Comming Soon)" icon={MdDashboard} disabled/>
             </Tabs>
@@ -56,23 +87,29 @@ const BuyPage: NextPageWithLayout = () => {
     );
 }
 
-const CoinTransfer = () => {
+interface CoinTransferProps {
+    setPrices: (prices: CryptoPrice['initialPrices']) => void;
+    prices: CryptoPrice['initialPrices'];
+}
+
+const CoinTransfer: React.FC<CoinTransferProps> = ({ setPrices, prices }) => {
     const [openModal, setOpenModal] = useState(false)
     const [openCoinDropdown, setOpenCoinDropdown] = useState(false)
     const [amountToBuy, setAmountToBuy] = useState<string>('')
     const [amountInMTR, setAmountInMTR] = useState<string>('')
+    const [currentMTRPriceinUsd, setCurrentMTRPriceinUsd] = useState<number>(0.30);
     const [coinsAvailable, setCoinsAvailable] = useState<Coin[]>([
         {
             name: 'USD',
             icon: <BiSolidDollarCircle className="w-5 h-5 me-2.5 fill-orange "/>,
             value: 'usd',
-            rate: 0.30
+            rate: currentMTRPriceinUsd
         },
         {
             name: 'COP',
             icon: <TbCurrencyPeso className="w-5 h-5 me-2.5 fill-lime-700"/>,
             value: 'cop',
-            rate: 1165.75
+            rate: 1165.75 /** TODO UPDATE WITH AN API THE ACTUAL COTITATION OF PESO */
         },
         {
             name: 'BTC',
@@ -194,22 +231,85 @@ const CoinTransfer = () => {
                 <p className="z-10 absolute bottom-2 left-2" >Buy Metri</p>
             </button>
         </div>
-        <BuyModal openModal={openModal} setOpenModal={setOpenModal}/>
+        <BuyModal currentMTRPriceinUsd={currentMTRPriceinUsd} openModal={openModal} setOpenModal={setOpenModal} setPrices={setPrices} prices={prices} amountInMTR={amountInMTR} selectedCoin={selectedCoin} amountToBuy={amountToBuy} />
     </div>
 
 
     )
 } 
 
-const BuyModal: React.FC<{openModal: boolean, setOpenModal: Dispatch<SetStateAction<boolean>>}> = ({openModal, setOpenModal}) => {
+interface BuyModalProps extends CoinTransferProps {
+    openModal: boolean;
+    setOpenModal: Dispatch<SetStateAction<boolean>>;
+    amountInMTR: string;
+    selectedCoin: Coin;
+    amountToBuy: string;
+    currentMTRPriceinUsd: number;
+}
+
+const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, setPrices, prices, amountInMTR, selectedCoin, amountToBuy, currentMTRPriceinUsd}) => {
+    console.log(prices)
+
     enum typeOfPaymentEnum {
         BANK = 'bank',
         BTC = 'btc',
         SOL = 'sol',
-        ETH = 'eth'
+        ETH = 'eth',
+        BNB = 'bnb'
     }
     const [modalPlacement, setModalPlacement] = useState<ModalProps['position']>('center')
     const [typeOfPayment, setTypeOfPayment] = useState<typeOfPaymentEnum | undefined>()
+    const [amountInCurrencySelected, setAmountInCurrencySelected] = useState<number>(0)
+    const [showDetails, setShowDetails] = useState<boolean>(false)
+
+    const fetchPrices = async () => {
+        try {
+            const response = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
+                params: {
+                    ids: 'bitcoin,binancecoin,ethereum',
+                    vs_currencies: 'usd'
+                }
+            });
+            setPrices(response.data);
+        } catch (error) {
+            console.error('Failed to fetch data', error);
+        }
+    };
+
+    function calculateMtrToTypeOfPaymentSelected(mtrAmount: number, mtrToUsdRate: number, typeOfPaymentRateInUsd: number) {
+        const usdAmount = mtrAmount * mtrToUsdRate;
+        const equivalent = usdAmount / typeOfPaymentRateInUsd;
+        return equivalent;
+    }
+
+    const handdleShowDetails = async () => {
+        if (typeOfPayment) {
+            if (!prices) return
+            setShowDetails(true);
+            await fetchPrices();
+            //** amount to pay in the amount selected  */
+            let amount;
+            switch (typeOfPayment) {
+                case typeOfPaymentEnum.BTC:
+                    amount = calculateMtrToTypeOfPaymentSelected(Number(amountInMTR), currentMTRPriceinUsd , prices.bitcoin.usd);
+                    break;
+                case typeOfPaymentEnum.BNB:
+                    amount = calculateMtrToTypeOfPaymentSelected(Number(amountInMTR), currentMTRPriceinUsd , prices.binancecoin.usd);
+                    break;
+                case typeOfPaymentEnum.ETH:
+                    amount = calculateMtrToTypeOfPaymentSelected(Number(amountInMTR), currentMTRPriceinUsd , prices.ethereum.usd);
+                    break;
+                /* case typeOfPaymentEnum.BANK:
+                    amount = prices.usd;
+                    break; */
+                default:
+                    amount = 0;
+                    break;
+            }
+            setAmountInCurrencySelected(amount);
+            return
+        }
+    }
 
     const handlePaymentType = (type: typeOfPaymentEnum) => {
         setTypeOfPayment(type)
@@ -225,41 +325,73 @@ const BuyModal: React.FC<{openModal: boolean, setOpenModal: Dispatch<SetStateAct
                 show: {
                     on: "flex bg-gray-900 bg-opacity-50 dark:bg-opacity-80",
                 }
+            },
+            content: {
+                inner: 'relative flex max-h-[95dvh] flex-col rounded-lg bg-white shadow dark:bg-gray-700'
             }
         }}
         onClose={() => setOpenModal(false)}
     >
         <Modal.Header>
-          <h2 className="text-lg font-semibold">Buy Metri</h2>
+          <h2 className="text-lg font-semibold">{showDetails? 'Payment Details' : 'Choose Payment Method'}</h2>
         </Modal.Header>
         <Modal.Body>
-        <div className="flex flex-col justify-start gap-6">
-            <div>
-                <p>Fiat payment</p>
-                <button onClick={() => handlePaymentType(typeOfPaymentEnum.BANK)} className="flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]">
-                    <CiBank className="w-8 h-8"/>
-                    Bank Transfer
-                </button>
-            </div>
-            <div >
-                <p>Crypto Payment</p>
-                <button  onClick={() => handlePaymentType(typeOfPaymentEnum.BTC)} className="flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]">
-                    <TbCurrencyBitcoin className="w-8 h-8"/>
-                    Bitcoin
-                </button>
-                <button onClick={() => handlePaymentType(typeOfPaymentEnum.SOL)} className="flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]">
-                    <TbCurrencySolana className="w-8 h-8"/>
-                    Solana
-                </button>
-                <button onClick={() => handlePaymentType(typeOfPaymentEnum.ETH)} className="flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]">
-                    <TbCurrencyEthereum className="w-8 h-8"/>
-                    Ethereum
-                </button>
-            </div>
+        <div className="flex flex-col justify-start gap-6 ">
+            {
+                showDetails ? (
+                    <div>
+                        <button onClick={() => setShowDetails(false)}>
+                            <FaArrowLeft/>
+                        </button>
+                        <p>Details</p>
+                        <div className="flex flex-col gap-4">
+                            <div className="flex justify-between">
+                                <p>amount in {selectedCoin.name}</p>
+                                <div className="flex items-center">
+                                    <p>{amountToBuy}</p>
+                                    {selectedCoin.icon}
+                                </div>
+                            </div>
+                            <div className="flex justify-between">
+                                <p>Rate in {typeOfPayment?.toUpperCase()}</p>
+                                <p>{amountInCurrencySelected}</p>
+                            </div>
+                            
+                        </div>
+                    </div>
+                )
+                : 
+                <>
+                {/* TODO ADD COMPATIBILITY WIth bank */}
+                <div>
+                    <p>Fiat payment</p>
+                    <button disabled onClick={() => handlePaymentType(typeOfPaymentEnum.BANK)} className={`flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border ${typeOfPayment === typeOfPaymentEnum.BANK ? 'border-lightGreen': ''} disabled:opacity-80 focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]`}>
+                        <CiBank className="w-8 h-8"/>
+                        Bank Transfer (Soon)
+                    </button>
+                </div>
+                <div >
+                    <p>Crypto Payment</p>
+                    <button  onClick={() => handlePaymentType(typeOfPaymentEnum.BTC)} className={`flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border ${typeOfPayment === typeOfPaymentEnum.BTC ? 'border-lightGreen': ''} hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]`}>
+                        <TbCurrencyBitcoin className="w-8 h-8"/>
+                        Bitcoin
+                    </button>
+                    <button onClick={() => handlePaymentType(typeOfPaymentEnum.BNB)} className={`flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border ${typeOfPayment === typeOfPaymentEnum.BNB ? 'border-lightGreen' : ''} hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]`}>
+                        <TbBrandBinance className="w-8 h-8"/>
+                        Binance smart chain
+                    </button>
+                    <button onClick={() => handlePaymentType(typeOfPaymentEnum.ETH)} className={`flex w-full  justify-start items-center gap-4 px-[16px] rounded-[10px] relative border ${typeOfPayment === typeOfPaymentEnum.ETH ? 'border-lightGreen' : ''}  hover:border-lightGreen focus:border-lightGreen border-solid cursor-pointer py-[12px] h-[76px] mt-[12px]`}>
+                        <TbCurrencyEthereum className="w-8 h-8"/>
+                        Ethereum
+                    </button>
+                </div>
+                </>
+            }
+            
         </div>
         </Modal.Body>
         <Modal.Footer>
-          <button className="text-base bg-orange w-full items-center appearance-none border-b-gray-800 rounded-bl-lg rounded-br-lg border-l-gray-800 border-l-0 border-r-gray-800 border-r-0 border-t-gray-800 rounded-tl-lg rounded-tr-lg box-border text-gray-800 space-x-1.5 cursor-pointer flex text-base font-medium h-12 justify-center leading-6 mb-0 ml-0 mr-0 mt-0 min-h-12 min-w-20 outline-none overflow-x-hidden overflow-y-hidden pb-0 pl-4 pr-4 pt-0 space-y-1.5 text-center no-underline overflow-ellipsis whitespace-nowrap select-none break-all">
+          <button disabled={typeOfPayment === undefined} onClick={handdleShowDetails} className="bg-orange disabled:opacity-80 disabled:cursor-not-allowed w-full items-center appearance-none border-b-gray-800 rounded-bl-lg rounded-br-lg border-l-gray-800 border-l-0 border-r-gray-800 border-r-0 border-t-gray-800 rounded-tl-lg rounded-tr-lg box-border text-gray-800 space-x-1.5 cursor-pointer flex text-base font-medium h-12 justify-center leading-6 mb-0 ml-0 mr-0 mt-0 min-h-12 min-w-20 outline-none overflow-x-hidden overflow-y-hidden pb-0 pl-4 pr-4 pt-0 space-y-1.5 text-center no-underline overflow-ellipsis whitespace-nowrap select-none break-all">
             Confirm
           </button>
         </Modal.Footer>
