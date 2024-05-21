@@ -1,8 +1,8 @@
+import { useState, useEffect, useCallback, SetStateAction, Dispatch } from "react";
 import { NextPageWithLayout } from "@layouts/Baseof";
 import axios from 'axios';
 import Sidebar from "@layouts/components/sidebar";
 import { Button, Card, CustomFlowbiteTheme, Select, Tabs, Label, Modal, ModalProps } from "flowbite-react";
-import { useState, useEffect, SetStateAction, Dispatch } from "react";
 import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
 import { MdDashboard } from "react-icons/md";
 import { BiSolidDollarCircle,BiLogoBitcoin } from "react-icons/bi";
@@ -206,14 +206,14 @@ const CoinTransfer: React.FC<CoinTransferProps> = ({ setPrices, prices }) => {
                     </button>
                 </div>
             </div>
-            {/* <div className="flex justify-between items-center flex-col sm:flex-row space-y-2 sm:space-y-0">
+             {/* <div className="flex justify-between items-center flex-col sm:flex-row space-y-2 sm:space-y-0">
                 <p className="text-sm text-gray-500 dark:text-gray-400">Last update: 20:45 AM, November 20, 2023</p>
                 <button type="reset" className="text-sm text-blue-700 dark:text-blue-500 inline-flex items-center font-medium hover:underline" disabled>
                     Refresh <svg className="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
                         <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
                     </svg>
                 </button>
-            </div> */}
+            </div>  */}
         </form>
         <div className=" space-x-0  rtl:space-x-reverse flex items-center flex-col mb-4 mt-20">
             <button onClick={() => setOpenModal(true)} className=" text-gray-50  duration-300 relative group cursor-pointer   overflow-hidden h-16 w-48 rounded-md bg-lightGreen opacity-90 p-2  font-extrabold hover:bg-orange">
@@ -231,14 +231,14 @@ const CoinTransfer: React.FC<CoinTransferProps> = ({ setPrices, prices }) => {
                 <p className="z-10 absolute bottom-2 left-2" >Buy Metri</p>
             </button>
         </div>
-        <BuyModal currentMTRPriceinUsd={currentMTRPriceinUsd} openModal={openModal} setOpenModal={setOpenModal} setPrices={setPrices} prices={prices} amountInMTR={amountInMTR} selectedCoin={selectedCoin} amountToBuy={amountToBuy} />
+        <BuyModal currentMTRPriceinUsd={currentMTRPriceinUsd} openModal={openModal} setOpenModal={setOpenModal} amountInMTR={amountInMTR} selectedCoin={selectedCoin} amountToBuy={amountToBuy} />
     </div>
 
 
     )
 } 
 
-interface BuyModalProps extends CoinTransferProps {
+interface BuyModalProps {
     openModal: boolean;
     setOpenModal: Dispatch<SetStateAction<boolean>>;
     amountInMTR: string;
@@ -247,9 +247,9 @@ interface BuyModalProps extends CoinTransferProps {
     currentMTRPriceinUsd: number;
 }
 
-const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, setPrices, prices, amountInMTR, selectedCoin, amountToBuy, currentMTRPriceinUsd}) => {
-    console.log(prices)
-
+const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, amountInMTR, selectedCoin, amountToBuy, currentMTRPriceinUsd}) => {
+    const startMinutes = 1;
+    const startSeconds = 0;
     enum typeOfPaymentEnum {
         BANK = 'bank',
         BTC = 'btc',
@@ -261,20 +261,48 @@ const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, setPrices, 
     const [typeOfPayment, setTypeOfPayment] = useState<typeOfPaymentEnum | undefined>()
     const [amountInCurrencySelected, setAmountInCurrencySelected] = useState<number>(0)
     const [showDetails, setShowDetails] = useState<boolean>(false)
+    /* const [counterMinutes, setCounterMinutes] = useState<number>(5)
+    const [counterSeconds, setCounterSeconds] = useState<number>(0) */
+    /* const [time, setTime] = useState({
+        minutes: startMinutes,
+        seconds: startSeconds,
+    });
 
-    const fetchPrices = async () => {
-        try {
-            const response = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
-                params: {
-                    ids: 'bitcoin,binancecoin,ethereum',
-                    vs_currencies: 'usd'
-                }
-            });
-            setPrices(response.data);
-        } catch (error) {
-            console.error('Failed to fetch data', error);
+    useEffect(() => {
+        if (openModal) {
+            setTime({ minutes: startMinutes, seconds: startSeconds });
         }
-    };
+    }, [openModal]); */
+
+    /* const startCountDown = useCallback(() => {
+        const timer = setInterval(() => {
+            setTime(prevTime => {
+                let { minutes, seconds } = prevTime;
+                seconds--;
+                if (seconds < 0) {
+                    minutes--;
+                    seconds = 59;
+                }
+                if (minutes < 0) {
+                    clearInterval(timer);
+                    return { minutes: 0, seconds: 0 };
+                }
+                return { minutes, seconds };
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []); */
+
+    /* useEffect(() => {
+        let timer: () => void;
+        if (openModal) {
+            timer = startCountDown();
+        }
+        console.log('timer', timer)
+        return () => {
+            if (timer) timer();
+        }
+    }, [openModal, startCountDown]); */
 
     function calculateMtrToTypeOfPaymentSelected(mtrAmount: number, mtrToUsdRate: number, typeOfPaymentRateInUsd: number) {
         const usdAmount = mtrAmount * mtrToUsdRate;
@@ -282,22 +310,25 @@ const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, setPrices, 
         return equivalent;
     }
 
-    const handdleShowDetails = async () => {
-        if (typeOfPayment) {
-            if (!prices) return
-            setShowDetails(true);
-            await fetchPrices();
-            //** amount to pay in the amount selected  */
+    const fetchPrices = useCallback(async () => {
+        console.log('Fetching prices')
+        try {
+            const response = await axios.get('https://api.coingecko.com/api/v3/simple/price', {
+                params: {
+                    ids: 'bitcoin,binancecoin,ethereum',
+                    vs_currencies: 'usd'
+                }
+            });
             let amount;
             switch (typeOfPayment) {
                 case typeOfPaymentEnum.BTC:
-                    amount = calculateMtrToTypeOfPaymentSelected(Number(amountInMTR), currentMTRPriceinUsd , prices.bitcoin.usd);
+                    amount = calculateMtrToTypeOfPaymentSelected(Number(amountInMTR), currentMTRPriceinUsd , response.data.bitcoin.usd);
                     break;
                 case typeOfPaymentEnum.BNB:
-                    amount = calculateMtrToTypeOfPaymentSelected(Number(amountInMTR), currentMTRPriceinUsd , prices.binancecoin.usd);
+                    amount = calculateMtrToTypeOfPaymentSelected(Number(amountInMTR), currentMTRPriceinUsd , response.data.binancecoin.usd);
                     break;
                 case typeOfPaymentEnum.ETH:
-                    amount = calculateMtrToTypeOfPaymentSelected(Number(amountInMTR), currentMTRPriceinUsd , prices.ethereum.usd);
+                    amount = calculateMtrToTypeOfPaymentSelected(Number(amountInMTR), currentMTRPriceinUsd , response.data.ethereum.usd);
                     break;
                 /* case typeOfPaymentEnum.BANK:
                     amount = prices.usd;
@@ -307,6 +338,16 @@ const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, setPrices, 
                     break;
             }
             setAmountInCurrencySelected(amount);
+/*             startCountDown();
+ */        } catch (error) {
+            console.error('Failed to fetch data', error);
+        }
+    }, [amountInMTR, currentMTRPriceinUsd, typeOfPayment, typeOfPaymentEnum.BNB, typeOfPaymentEnum.BTC, typeOfPaymentEnum.ETH]); // Add an empty array as the second argument to useCallback
+
+    const handdleShowDetails = () => {
+        if (typeOfPayment) {
+            setShowDetails(true);
+            fetchPrices();
             return
         }
     }
@@ -344,7 +385,7 @@ const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, setPrices, 
                             <FaArrowLeft/>
                         </button>
                         <p>Details</p>
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-4 ">
                             <div className="flex justify-between">
                                 <p>amount in {selectedCoin.name}</p>
                                 <div className="flex items-center">
@@ -356,7 +397,24 @@ const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, setPrices, 
                                 <p>Rate in {typeOfPayment?.toUpperCase()}</p>
                                 <p>{amountInCurrencySelected}</p>
                             </div>
+
+                            <Image src={'/images/qr/bnb.svg'} alt="qr code" width={200} height={200} className="flex self-center"/>
                             
+                            {/* <div className="flex items-center justify-cente</div>r w-full gap-1.5 count-down-main">
+                                <div className="timer">
+                                    <div className="rounded-xl bg-gradient-to-b from-indigo-600 to-purple-600 py-3 min-w-[96px] flex items-center justify-center flex-col gap-1 aspect-square px-3">
+                                    <h3 className="countdown-element minutes font-manrope font-semibold text-2xl text-white text-center">5</h3>
+                                    <p className="text-lg font-manrope font-normal text-white mt-1 text-center w-full">Minutes</p>
+                                    </div>
+                                </div>
+                                <h3 className="font-manrope font-semibold text-2xl text-gray-900">:</h3>
+                                <div className="timer">
+                                    <div className="rounded-xl bg-gradient-to-b from-indigo-600 to-purple-600 py-3 min-w-[96px] flex items-center justify-center flex-col gap-1 aspect-square px-3">
+                                    <h3 className="countdown-element seconds font-manrope font-semibold text-2xl text-white text-center">0</h3>
+                                    <p className="text-lg font-manrope font-normal text-white mt-1 text-center w-full">Seconds</p>
+                                    </div>
+                                </div>
+                            </div> */}
                         </div>
                     </div>
                 )
