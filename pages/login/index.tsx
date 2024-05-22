@@ -6,6 +6,8 @@ import { useRouter } from 'next/router';
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [isRegister, setIsRegister] = useState(false);
     const router = useRouter();
 
     const handleLogin = async () => {
@@ -26,6 +28,10 @@ const Login = () => {
             password={password}
             setPassword={setPassword}
             handleLogin={handleLogin}
+            isRegister={isRegister}
+            setIsRegister={setIsRegister}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
         />
     )
 }
