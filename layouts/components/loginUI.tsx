@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FaEye, FaEyeSlash  } from "react-icons/fa";
+
 
 interface LoginProps {
     isRegister: boolean;
@@ -8,13 +10,14 @@ interface LoginProps {
     setPassword: React.Dispatch<React.SetStateAction<string>>;
     confirmPassword?: string;
     setConfirmPassword: React.Dispatch<React.SetStateAction<string>>;
-    handleLogin: () => void;
+    handleSubmit: () => void;
     setIsRegister: React.Dispatch<React.SetStateAction<boolean>>;
+    error: string | null;
 }
 
 const Login: React.FC<LoginProps> = ({
     isRegister,
-    handleLogin,
+    handleSubmit,
     email,
     setEmail,
     password,
@@ -22,8 +25,10 @@ const Login: React.FC<LoginProps> = ({
     confirmPassword,
     setConfirmPassword,
     setIsRegister,
+    error
 }) => {
     const [passwordError, setPasswordError] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
 
     const validatePassword = () => {
         if (password !== confirmPassword) {
@@ -40,6 +45,7 @@ const Login: React.FC<LoginProps> = ({
                     <h3 className="font-semibold whitespace-nowrap tracking-tight text-2xl text-center">
                         {isRegister ? "Register" : "Login"}
                     </h3>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
                     <p className="text-sm text-muted-foreground text-center">
                         {isRegister ? "Create an account" : "Enter your email and password to log in."}
                     </p>
@@ -69,14 +75,19 @@ const Login: React.FC<LoginProps> = ({
                         >
                             Password
                         </label>
-                        <input
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            id="password"
-                            required
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
+                        <div className="flex relative">
+                            <input
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                id="password"
+                                required
+                                value={password}
+                                type={showPassword ? "text" : "password"}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                                {showPassword ? <FaEyeSlash/> : <FaEye/>}
+                            </button>
+                        </div>
                     </div>
                     {isRegister && (
                         <div className="space-y-2">
@@ -86,17 +97,22 @@ const Login: React.FC<LoginProps> = ({
                             >
                                 Confirm Password
                             </label>
-                            <input
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                id="confirmPassword"
-                                required
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) => {
-                                    setConfirmPassword(e.target.value);
-                                    validatePassword();
-                                }}
-                            />
+                            <div className="flex relative">
+                                <input
+                                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    id="confirmPassword"
+                                    required
+                                    type={showPassword ? "text" : "password"}
+                                    value={confirmPassword}
+                                    onChange={(e) => {
+                                        setConfirmPassword(e.target.value);
+                                        validatePassword();
+                                    }}
+                                />
+                                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                                    {showPassword ? <FaEyeSlash/> : <FaEye/>}
+                                </button>
+                            </div>
                             {passwordError && <p className="text-red-500">{passwordError}</p>}
                         </div>
                     )}
@@ -104,8 +120,8 @@ const Login: React.FC<LoginProps> = ({
                 </div>
                 <div className="flex items-center p-4">
                     <button
-                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
-                        onClick={handleLogin}
+                        className="text-white inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                        onClick={handleSubmit}
                     >
                         {isRegister ? "Register" : "Log In"}
                     </button>

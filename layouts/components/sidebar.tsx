@@ -1,21 +1,34 @@
-import { useEffect, useState } from "react"
-import { Sidebar } from 'flowbite-react';
+import { useCallback, useEffect, useState } from "react"
 import config from "@config/config.json";
 import { FaDollarSign } from "react-icons/fa";
-import { HiArrowSmRight, HiCalendar, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, HiViewBoards,  } from 'react-icons/hi';
-import router from "next/router";
+import { HiArrowSmRight, HiCalendar, HiChartPie } from 'react-icons/hi';
+import router, { useRouter } from "next/router";
 import React from "react";
 import Image from "next/image";
+import { checkSession } from "@lib/utils/checkSession";
 
 export default function SidebarComponent({ children }: { children: React.ReactNode }) {
 
     const [menuOpen, setMenuOpen] = useState(false)
     const [menu1, setMenu1] = useState(false)
+    const [balance, setBalance] = useState(null);
+    const [error, setError] = useState(null);
+    const router = useRouter();
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>, href: string) => {
       e.preventDefault()
       router.push(href)
     }
+
+    const checkUserSession = useCallback(async () => {
+      const sessionActive = await checkSession();
+      console.log('sessionActive', sessionActive)
+      if (!sessionActive) {
+        router.push('/login');
+        localStorage.removeItem('jwt');
+      }
+      return sessionActive;
+    }, [router]);
 
     const showNav = (show: boolean) => {
       setMenuOpen(show);
@@ -31,11 +44,47 @@ export default function SidebarComponent({ children }: { children: React.ReactNo
       // Add more menu items here
     ]);
 
-      useEffect(() => {
-           console.log(menuOpen)
-      }, [menuOpen])
+    useEffect(() => {
+          console.log(menuOpen)
+    }, [menuOpen])
 
-      const { title, logo } = config.site;
+    const { title, logo } = config.site;
+
+    useEffect(() => {
+        checkSession().then((session) => {
+          if (!session) {
+            router.push('/login');
+            localStorage.removeItem('jwt');
+            return;
+          }
+
+          const fetchBalance = async () => {
+            const token = localStorage.getItem('jwt');
+            const response = await fetch('http://localhost:3001/api/v1/balance', {
+              credentials: 'include', // Include cookies in the request
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+              },
+            });
+      
+            if (response.ok) {
+              const data = await response.json();
+              setBalance(data.balance);
+            } else {
+              const data = await response.json();
+              setError(data.error);
+            }
+          };
+      
+          fetchBalance();
+      
+          const sessionInterval = setInterval(checkUserSession, 5 * 60 * 1000); // Check every 5 minutes
+      
+          return () => clearInterval(sessionInterval);
+        });
+      }, [checkUserSession, router]);
+
 
    return (
       <div >

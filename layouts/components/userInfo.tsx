@@ -1,10 +1,9 @@
-import Image from "next/image";
 import Watch from "./watch";
-import { getUserInfo } from "@lib/firebase/config";
 import { useEffect, useState } from "react";
 import ChartComponent from "./chart";
 import ApexCharts from "apexcharts";
 import Timeline from "./Timeline";
+import { getCurrentUser } from "@lib/utils/getCurrentUser";
 
 interface UserInfoProps {
 	chartOptions : ApexCharts.ApexOptions;
@@ -21,9 +20,13 @@ const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
 	console.log(porcentage, 'porcentage')
 
 	useEffect(() => {
-		const user = getUserInfo();
-		console.log(user)
-		setUser(user);
+
+		const getUser = async () => {
+			const user = await getCurrentUser();
+			console.log(user)
+			setUser(user);
+		}
+		getUser();
 		setPorcentage(((soldTokens / supply) * 100).toFixed(0).toString() + '%')
 	} , [soldTokens, supply]);
 
