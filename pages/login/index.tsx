@@ -13,6 +13,7 @@ const Login = () => {
 
     const handleLogin = async () => {
         const {error, data} = await loginUser({ email, password })
+        console.log('login', data)
         if (error) {
             setError(error);
         } else if (data) {

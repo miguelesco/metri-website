@@ -5,7 +5,7 @@ import { HiArrowSmRight, HiCalendar, HiChartPie } from 'react-icons/hi';
 import router, { useRouter } from "next/router";
 import React from "react";
 import Image from "next/image";
-import { checkSession } from "@lib/utils/checkSession";
+import { checkSession } from "@lib/utils/API/checkSession";
 
 export default function SidebarComponent({ children }: { children: React.ReactNode }) {
 

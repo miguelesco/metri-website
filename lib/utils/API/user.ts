@@ -30,6 +30,7 @@ export const getCurrentUser = async () => {
 
 export const loginUser = async ({email, password}: LoginParams) => {
   try {
+    console.log('APIURL', APIURL)
       const response = await fetch(`${APIURL}/users/sign_in`, {
           method: 'POST',
           headers: {
