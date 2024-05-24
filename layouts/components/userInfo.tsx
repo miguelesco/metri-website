@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import ChartComponent from "./chart";
 import ApexCharts from "apexcharts";
 import Timeline from "./Timeline";
-import { getCurrentUser } from "@lib/utils/getCurrentUser";
+import { getCurrentUser } from "@lib/utils/API/getCurrentUser";
 
 interface UserInfoProps {
 	chartOptions : ApexCharts.ApexOptions;

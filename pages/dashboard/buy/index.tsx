@@ -104,18 +104,6 @@ const CoinTransfer: React.FC<CoinTransferProps> = ({ setPrices, prices }) => {
             icon: <BiSolidDollarCircle className="w-5 h-5 me-2.5 fill-orange "/>,
             value: 'usd',
             rate: currentMTRPriceinUsd
-        },
-        {
-            name: 'COP',
-            icon: <TbCurrencyPeso className="w-5 h-5 me-2.5 fill-lime-700"/>,
-            value: 'cop',
-            rate: 1165.75 /** TODO UPDATE WITH AN API THE ACTUAL COTITATION OF PESO */
-        },
-        {
-            name: 'BTC',
-            icon: <BiLogoBitcoin className="w-5 h-5 me-2.5 fill-orange"/>,
-            value: 'btc',
-            rate: 0.0000048
         }
     ])
     const [selectedCoin, setSelectedCoin] = useState<Coin>(coinsAvailable[0]) ;
