@@ -34,3 +34,18 @@ export interface ILoginResponse {
     token: string,
     user: ICurrentUser
 }
+
+export interface IHistoryResponse {
+    id: number;
+    user_id: number;
+    crypto_type: string;
+    amount: string;
+    status: string;
+    transaction_id: string;
+    blockchain: string;
+    wallet_address: string;
+    transaction_hash: string;
+    created_at: string;
+    updated_at: string;
+    metri_equivalent: string;
+}

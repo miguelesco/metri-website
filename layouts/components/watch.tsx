@@ -1,4 +1,4 @@
-import { ICurrentUser } from '@lib/utils/API/interfaces';
+import { ICurrentUser } from '@lib/utils/interfaces';
 import React from 'react'
 import { BiSolidDollarCircle } from "react-icons/bi";
 

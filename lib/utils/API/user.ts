@@ -1,86 +1,79 @@
-import { APIURL } from "../enviromentCheck";
-import { DefaultResponse, ICurrentUser, ILoginResponse, LoginParams, RegisterParams } from "./interfaces";
+import { fetchData } from "../utilities";
+import { DefaultResponse, ICurrentUser, IHistoryResponse, ILoginResponse, LoginParams, RegisterParams } from "../interfaces";
+
 
 // utils/api.js
 export const getCurrentUser = async (): Promise<DefaultResponse<ICurrentUser>> => {
   try {
-    const token = localStorage.getItem('jwt');
+    const response = await fetchData<ICurrentUser>('current_user', 'GET');
   
-    const response = await fetch(`${APIURL}/current_user`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      credentials: 'include',
-    });
-  
-    if (!response.ok) {
-      const errorData = await response.json();
-      return {data: null, error: errorData.error};
+    if (!response.error) {
+      const { data } = response;
+      return { data, error: null };
+    } else {
+      return { data: null, error: response.error };
     }
-  
-    const data: ICurrentUser = await response.json();
-    return {data, error: null};
   } catch (error) {
     console.error('Error fetching current user:', error);
-    return {data: null, error: 'An error occurred. Please try again.'};
+    return { data: null, error: 'An error occurred. Please try again.' };
   }
 };
 
-export const loginUser = async ({email, password}: LoginParams): Promise<DefaultResponse<ILoginResponse>> => {
+export const loginUser = async ({ email, password }: LoginParams): Promise<DefaultResponse<ILoginResponse>> => {
   try {
-      const response = await fetch(`${APIURL}/users/sign_in`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          credentials: 'include', // Include cookies in the request
-          body: JSON.stringify({
-              user: {
-                  email,
-                  password,
-              },
-          }),
-      });
+    const response = await fetchData<ILoginResponse>('users/sign_in', 'POST', {
+      user: {
+        email,
+        password,
+      },
+    });
 
-      if (response.ok) {
-          const data: ILoginResponse = await response.json();
-          // Redirect to a protected route or homepage
-          return { data, error: null };
-      } else {
-          const data = await response.json();
-          return { data: null, error: data.error };
-      }
-  } catch (err) {
-      return { data: null, error: 'An error occurred. Please try again.' };
+    if (!response.error) {
+      const {data} = response;
+      return { data, error: null };
+    } else {
+      return { data: null, error: response.error };
+    }
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    return { data: null, error: 'An error occurred. Please try again.' };
   }
 };
 
 export const registerUser = async ({ email, password, confirmPassword }: RegisterParams): Promise<DefaultResponse<ILoginResponse>> => {
   try {
-    const response = await fetch(`${APIURL}/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await fetchData<ILoginResponse>('users', 'POST', {
+      user: {
+        email,
+        password,
+        password_confirmation: confirmPassword,
       },
-      body: JSON.stringify({
-        user: {
-          email,
-          password,
-          password_confirmation: confirmPassword,
-        },
-      }),
     });
 
-    if (response.ok) {
-      const data: ILoginResponse = await response.json();
+    if (!response.error) {
+      const { data } = response;
       return { data, error: null };
     } else {
-      const data = await response.json();
-      return { data: null, error: data.error };
+      return { data: null, error: response.error };
     }
-  } catch (err) {
+  } catch (error) {
+    console.error('Error registering user:', error);
     return { data: null, error: 'An error occurred. Please try again.' };
   }
 };
+
+export const getUserHistory = async (): Promise<DefaultResponse<IHistoryResponse[]>> => {
+  try {
+    const response = await fetchData<IHistoryResponse[]>('api/v1/transaction_history', 'GET');
+  
+    if (!response.error) {
+      const { data } = response;
+      return { data, error: null };
+    } else {
+      return { data: null, error: response.error };
+    }
+  } catch (error) {
+    console.error('Error fetching user history:', error);
+    return { data: null, error: 'An error occurred. Please try again.' };
+  }
+}

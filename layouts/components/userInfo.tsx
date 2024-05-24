@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import ChartComponent from "./chart";
 import ApexCharts from "apexcharts";
 import Timeline from "./Timeline";
-import { getCurrentUser } from "@lib/utils/API/user";
-import { ICurrentUser } from "@lib/utils/API/interfaces";
+import { getCurrentUser, getUserHistory } from "@lib/utils/API/user";
+import { ICurrentUser, IHistoryResponse } from "@lib/utils/interfaces";
 import { getMetriExchangeRate } from "@lib/utils/API/getMetriPrice";
 
 interface UserInfoProps {
@@ -15,6 +15,7 @@ const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
 
 	const [user , setUser] = useState<ICurrentUser>();
 	const [metriExchangeRate, setMetriExchangeRate] = useState<number>(0);
+	const [userHistory, setUserHistory] = useState<IHistoryResponse[]>();
 	const [supply, setSupply] = useState<number>(5000000);
 	const [soldTokens, setSoldTokens] = useState<number>(2000000);
 	const [daysLeft, setDaysLeft] = useState<number>(12);
@@ -34,8 +35,14 @@ const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
 			if (metriExchangeRate.data)
 			setMetriExchangeRate(metriExchangeRate.data.current_price);
 		}
+		const userHistory = async () => {
+			const history = await getUserHistory();
+			if (history.data)
+			setUserHistory(history.data);
+		}
 		getUser();
 		metriExchangeRate();
+		userHistory();
 		setPorcentage(((soldTokens / supply) * 100).toFixed(0).toString() + '%')
 	} , [soldTokens, supply ]);
 
