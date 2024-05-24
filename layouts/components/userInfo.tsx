@@ -120,58 +120,61 @@ const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
 							paginatedData?.map((history, index) => (
 								<tr
 								key={index}
-								className="w-full relative grid grid-cols-3 grid-rows-2 md:table-row items-center gap-x-2"
+								className="w-full relative grid grid-cols-3 grid-rows-2 md:table-row items-center gap-x-2 "
 								style={{ gridTemplateColumns: '1fr 6fr 2fr' }}
 							>
-								<td className="col-span-1 row-span-2">
+								<td className="col-span-1 row-span-2 h-11">
 									{history.status === 'completed' ? <IoCheckmarkDoneOutline/> : <FaArrowsRotate/>}
 								</td>
-								<td className="col-start-2 col-end-3 row-start-1 row-end-1">
+								<td className="col-start-2 col-end-3 row-start-1 row-end-1 h-11">
 									<span
 										className="font-medium text-lg sm:text-lg tracking-tight text-gray-800 leading-none"
 										>{history.status}</span
 									>
 								</td>
-								<td className="col-start-2 col-end-3 row-start-2 row-end-2">
+								<td className="col-start-2 col-end-3 row-start-2 row-end-2 h-11">
 									<span
 										className="font-normal text-base tracking-tight text-gray-500 leading-none"
 										>{new Date(history.created_at).toLocaleString()}</span
 									>
 								</td>
 								<td
-									className="col-start-3 col-end-4 row-start-1 row-end-3 text-right place-items-center"
+									className="col-start-3 col-end-4 row-start-1 row-end-3 text-right place-items-center h-11"
 								>
 									<span
 										className="font-medium text-lg sm:text-lg tracking-tight text-gray-800"
 										>{history.amount} <span className="text-xs">MTR</span></span
 									>
 								</td>
-								<td className="flex col-start-3 col-end-4 row-start-1 row-end-3 text-right place-items-center justify-center gap-4">
+								<td className=" col-start-3 col-end-4 row-start-1 row-end-3 text-right place-items-center justify-center gap-4 h-11">
 									
-									<CopyToClipboard text={history.transaction_id} onCopy={() => handleCopy(index)}>
-										<button className="outline-2 outline-slate-950 group cursor-pointer relative flex gap-1.5 px-4 py-2 bg-lightGreen bg-opacity-15 text-darkGreen text-opacity-70 rounded-2xl hover:bg-opacity-70 transition font-semibold shadow-md">
-											Copy ID
-											{visibleIndex === index && (
-												<span className="pointer-events-none absolute opacity-0 group-focus:opacity-100 group-focus:text-gray-700 group-focus:text-sm group-focus:-translate-y-12 duration-700">
-													Copied to clipboard
-												</span>
-											)}
-										</button>
-									</CopyToClipboard>
+									<div className="flex justify-center gap-2">
+										
+										<CopyToClipboard text={history.transaction_id} onCopy={() => handleCopy(index)}>
+											<button className="outline-2 outline-slate-950 group cursor-pointer relative flex gap-1.5 px-4 py-2 bg-lightGreen bg-opacity-15 text-darkGreen text-opacity-70 rounded-2xl hover:bg-opacity-70 transition font-semibold shadow-md">
+												Copy ID
+												{visibleIndex === index && (
+													<span className="pointer-events-none absolute opacity-0 group-focus:opacity-100 group-focus:text-gray-700 group-focus:text-sm group-focus:-translate-y-12 duration-700">
+														Copied to clipboard
+													</span>
+												)}
+											</button>
+										</CopyToClipboard>
 
-									
-									{history.status === 'completed' && history.transaction_hash && (
-									<CopyToClipboard text={history.transaction_hash} onCopy={() => handleCopy(index)}>
-										<button className="outline-2 outline-slate-950 group cursor-pointer relative flex gap-1.5 px-4 py-2 bg-lightGreen bg-opacity-15 text-darkGreen text-opacity-70 rounded-2xl hover:bg-opacity-70 transition font-semibold shadow-md">
-											Copy Hash
-											{visibleIndex === index && (
-												<span className="pointer-events-none absolute opacity-0 group-focus:opacity-100 group-focus:text-gray-700 group-focus:text-sm group-focus:-translate-y-12 duration-700">
-													Copied to clipboard
-												</span>
-											)}
-										</button>
-									</CopyToClipboard>
-									)}
+										
+										{history.status === 'completed' && history.transaction_hash && (
+										<CopyToClipboard text={history.transaction_hash} onCopy={() => handleCopy(index)}>
+											<button className="outline-2 outline-slate-950 group cursor-pointer relative flex gap-1.5 px-4 py-2 bg-lightGreen bg-opacity-15 text-darkGreen text-opacity-70 rounded-2xl hover:bg-opacity-70 transition font-semibold shadow-md">
+												Copy Hash
+												{visibleIndex === index && (
+													<span className="pointer-events-none absolute opacity-0 group-focus:opacity-100 group-focus:text-gray-700 group-focus:text-sm group-focus:-translate-y-12 duration-700">
+														Copied to clipboard
+													</span>
+												)}
+											</button>
+										</CopyToClipboard>
+										)}
+									</div>
 								</td>
 							</tr>
 							))
