@@ -1,8 +1,8 @@
-import { APIURL } from "./enviromentCheck";
-import { IMetriPriceResponse } from "./interfaces";
+import { APIURL } from "../enviromentCheck";
+import { DefaultResponse, IMetriPriceResponse } from "./interfaces";
 
 // utils/api.js
-export const getCurrentUser = async () => {
+export const getMetriExchangeRate = async (): Promise<DefaultResponse<IMetriPriceResponse>> => {
     try {
       const token = localStorage.getItem('jwt');
   
@@ -17,14 +17,14 @@ export const getCurrentUser = async () => {
   
       if (!response.ok) {
         const errorData = await response.json();
-        return(errorData.error || 'Failed to fetch user');
+        return {data: null, error: errorData.error};
       }
   
       const data: IMetriPriceResponse = await response.json();
-      return data;
+      return {data, error: null};
     } catch (error) {
       console.error('Error fetching current user:', error);
-      throw error;
+      return {data: null, error: 'An error occurred. Please try again.'};
     }
   };
   

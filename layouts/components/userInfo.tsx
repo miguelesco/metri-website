@@ -4,6 +4,8 @@ import ChartComponent from "./chart";
 import ApexCharts from "apexcharts";
 import Timeline from "./Timeline";
 import { getCurrentUser } from "@lib/utils/API/user";
+import { ICurrentUser } from "@lib/utils/API/interfaces";
+import { getMetriExchangeRate } from "@lib/utils/API/getMetriPrice";
 
 interface UserInfoProps {
 	chartOptions : ApexCharts.ApexOptions;
@@ -11,7 +13,8 @@ interface UserInfoProps {
 
 const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
 
-	const [user , setUser] = useState<any>(null);
+	const [user , setUser] = useState<ICurrentUser>();
+	const [metriExchangeRate, setMetriExchangeRate] = useState<number>(0);
 	const [supply, setSupply] = useState<number>(5000000);
 	const [soldTokens, setSoldTokens] = useState<number>(2000000);
 	const [daysLeft, setDaysLeft] = useState<number>(12);
@@ -23,12 +26,18 @@ const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
 
 		const getUser = async () => {
 			const user = await getCurrentUser();
-			console.log(user)
-			setUser(user);
+			if (user.data)
+			setUser(user.data);
+		}
+		const metriExchangeRate = async () => {
+			const metriExchangeRate = await getMetriExchangeRate();
+			if (metriExchangeRate.data)
+			setMetriExchangeRate(metriExchangeRate.data.current_price);
 		}
 		getUser();
+		metriExchangeRate();
 		setPorcentage(((soldTokens / supply) * 100).toFixed(0).toString() + '%')
-	} , [soldTokens, supply]);
+	} , [soldTokens, supply ]);
 
     return (
         <div
@@ -37,7 +46,7 @@ const UserInfo: React.FC<UserInfoProps> = ({chartOptions}) => {
 				<section className="space-y-8 flex-none mx-auto">
 					<h2 className="font-semibold text-xl sm:text-2xl">Dashboard</h2>
 					
-					<Watch user={user}/>
+					<Watch userData={user} exchangeRate={metriExchangeRate}/>
 				</section>
 				<section className="space-y-8 xl:basis-5/12 lg:basis-2/4 flex-auto ">
 					<h2 className="font-semibold text-xl sm:text-2xl">Goal</h2>

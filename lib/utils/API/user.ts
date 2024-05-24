@@ -1,36 +1,35 @@
-import { APIURL } from "./enviromentCheck";
-import { ICurrentUser, LoginParams, RegisterParams } from "./interfaces";
+import { APIURL } from "../enviromentCheck";
+import { DefaultResponse, ICurrentUser, ILoginResponse, LoginParams, RegisterParams } from "./interfaces";
 
 // utils/api.js
-export const getCurrentUser = async () => {
-    try {
-      const token = localStorage.getItem('jwt');
-  
-      const response = await fetch(`${APIURL}/current_user`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        credentials: 'include',
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        return(errorData.error || 'Failed to fetch user');
-      }
-  
-      const data: ICurrentUser = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching current user:', error);
-      throw error;
-    }
-  };
-
-export const loginUser = async ({email, password}: LoginParams) => {
+export const getCurrentUser = async (): Promise<DefaultResponse<ICurrentUser>> => {
   try {
-    console.log('APIURL', APIURL)
+    const token = localStorage.getItem('jwt');
+  
+    const response = await fetch(`${APIURL}/current_user`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      credentials: 'include',
+    });
+  
+    if (!response.ok) {
+      const errorData = await response.json();
+      return {data: null, error: errorData.error};
+    }
+  
+    const data: ICurrentUser = await response.json();
+    return {data, error: null};
+  } catch (error) {
+    console.error('Error fetching current user:', error);
+    return {data: null, error: 'An error occurred. Please try again.'};
+  }
+};
+
+export const loginUser = async ({email, password}: LoginParams): Promise<DefaultResponse<ILoginResponse>> => {
+  try {
       const response = await fetch(`${APIURL}/users/sign_in`, {
           method: 'POST',
           headers: {
@@ -46,7 +45,7 @@ export const loginUser = async ({email, password}: LoginParams) => {
       });
 
       if (response.ok) {
-          const data = await response.json();
+          const data: ILoginResponse = await response.json();
           // Redirect to a protected route or homepage
           return { data, error: null };
       } else {
@@ -58,7 +57,7 @@ export const loginUser = async ({email, password}: LoginParams) => {
   }
 };
 
-export const registerUser = async ({ email, password, confirmPassword }: RegisterParams) => {
+export const registerUser = async ({ email, password, confirmPassword }: RegisterParams): Promise<DefaultResponse<ILoginResponse>> => {
   try {
     const response = await fetch(`${APIURL}/users`, {
       method: 'POST',
@@ -75,7 +74,7 @@ export const registerUser = async ({ email, password, confirmPassword }: Registe
     });
 
     if (response.ok) {
-      const data = await response.json();
+      const data: ILoginResponse = await response.json();
       return { data, error: null };
     } else {
       const data = await response.json();

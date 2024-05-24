@@ -1,4 +1,4 @@
-import { APIURL } from "./enviromentCheck";
+import { APIURL } from "../enviromentCheck";
 
 // utils/checkSession.js
 export const checkSession = async () => {

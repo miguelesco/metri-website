@@ -1,12 +1,21 @@
+
+export interface DefaultResponse<T> {
+    data: T | null;
+    error: string | null;
+}
+
 export interface IMetriPriceResponse {
-    metri_price: number
+    current_price: number
 }
 
 export interface ICurrentUser {
-    id: number,
-    email: string,
-    created_at: string,
-    updated_at: string
+    balance: number,
+    user: {
+        id: number,
+        email: string,
+        created_at: string,
+        updated_at: string
+    }
 }
 
 export interface LoginParams {
@@ -21,5 +30,7 @@ export interface RegisterParams {
 }
 
 export interface ILoginResponse {
-    jwt: string
+    message: string,
+    token: string,
+    user: ICurrentUser
 }
