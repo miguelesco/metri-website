@@ -26,7 +26,9 @@ export const loginUser = async ({ email, password }: LoginParams): Promise<Defau
         email,
         password,
       },
-    });
+    },
+    false
+  );
 
     if (!response.error) {
       const {data} = response;
@@ -48,7 +50,9 @@ export const registerUser = async ({ email, password, confirmPassword }: Registe
         password,
         password_confirmation: confirmPassword,
       },
-    });
+    },
+    false
+  );
 
     if (!response.error) {
       const { data } = response;
