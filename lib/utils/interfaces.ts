@@ -7,17 +7,6 @@ export interface DefaultResponse<T> {
 export interface IMetriPriceResponse {
     current_price: number
 }
-
-export interface ICurrentUser {
-    balance: number,
-    user: {
-        id: number,
-        email: string,
-        created_at: string,
-        updated_at: string
-    }
-}
-
 export interface LoginParams {
     email: string,
     password: string
@@ -28,6 +17,31 @@ export interface RegisterParams {
     password: string,
     confirmPassword: string
 }
+
+export interface CreatePaymentParams {
+    payment: {
+        crypto_type: string;
+        amount: number;
+        metri_equivalent: number;
+        blockchain: string;
+        wallet_address: string;
+    }
+}
+export interface ICurrentUser {
+    balance: number,
+    user: {
+        id: number,
+        email: string,
+        created_at: string,
+        updated_at: string
+    }
+}
+
+export interface IPaymentReportResponse {
+    transaction_id: string,
+    qr_code_svg: string,
+}
+
 
 export interface ILoginResponse {
     message: string,

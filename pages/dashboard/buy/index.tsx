@@ -12,6 +12,10 @@ import { TbCurrencySolana, TbCurrencyBitcoin,TbCurrencyEthereum, TbBrandBinance 
 import { CiBank } from "react-icons/ci";
 import { TbCurrencyPeso } from "react-icons/tb";
 import Image from "next/image";
+import { createPayment } from "@lib/utils/API/payment";
+import { CreatePaymentParams } from "@lib/utils/interfaces";
+import CopyToClipboard from "react-copy-to-clipboard";
+import CryptoCard from "@layouts/components/CryptoCard";
 
 interface Coin {
     name: string;
@@ -38,14 +42,14 @@ const tabsTheme: CustomFlowbiteTheme["tabs"] = {
             styles: {
                 default: {
                     active: {
-                        on: 'text-white bg-darkGreen',
+                        on: 'text-darkGreen bg-white',
                     },
                 }
             },
-            "base": "flex items-center focus:bg-darkGreen active:text-white bg-lightGreen  w-2/4 justify-center p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-white disabled:dark:text-white focus:ring-0  focus:outline-none rounded-t-lg border-transparent hover:border-lightGreen text-white focus:text-white",
+            "base": "flex items-center focus:bg-gray-100 focus:bg-opacity-100 active:text-darkGreen bg-darkGreen disabled:bg-opacity-90 w-2/4 justify-center p-4 pb-6 pt-6 text-xl font-bold font-semibold first:ml-0 disabled:cursor-not-allowed disabled:text-white disabled:dark:text-white focus:ring-0  focus:outline-none rounded-t-lg border-transparent hover:border-lightGreen text-white focus:text-darkGreen",
         },
     },
-    tabpanel: 'bg-darkGreen text-white sm:p-8 p-4 w-full rounded-b-lg'
+    tabpanel: 'bg-white text-darkGreen sm:p-8 p-4 w-full rounded-b-lg '
   };
 
 
@@ -71,19 +75,49 @@ export async function getServerSideProps() {
 const BuyPage: NextPageWithLayout<CryptoPrice> = ({ initialPrices }) => {
     const [prices, setPrices] = useState<CryptoPrice['initialPrices']>(initialPrices);
 
+    
+const cryptos = [
+    { name: 'BNB', price: '600.20', change: '-1.82%', icon: 'path/to/bnb-icon.png', changeColor: 'red-500' },
+    { name: 'BTC', price: '67,999.99', change: '-3.20%', icon: 'path/to/btc-icon.png', changeColor: 'red-500' },
+    { name: 'ETH', price: '3,841.00', change: '-2.58%', icon: 'path/to/eth-icon.png', changeColor: 'red-500' },
+    { name: 'PEPE', price: '0.00001599', change: '-4.19%', icon: 'path/to/pepe-icon.png', changeColor: 'red-500' },
+    { name: 'NOT', price: '0.009215', change: '+20.33%', icon: 'path/to/not-icon.png', changeColor: 'green-500' },
+  ];
+
     return (
-        <Card className="max-w-xl p-0" theme={{
-            root: {
-                children: 'p-0'
-            }
-        }}>
-            <Tabs aria-label="Default tabs" className="p-0 justify-center border-b-0" style={'default'} theme={tabsTheme}>
-                <Tabs.Item active={true} title="Buy" icon={HiUserCircle} className="text-white">
-                    <CoinTransfer setPrices={setPrices} prices={prices} />
-                </Tabs.Item>
-                <Tabs.Item title="Sell (Comming Soon)" icon={MdDashboard} disabled/>
-            </Tabs>
-        </Card>
+        <div className=" min-h-screen flex justify-evenly items-center">
+            <div className=" rounded-lg w-[500px] shadow border border-gray-200">
+                <div className="bg-white border-b-2 border-darkGreen border-opacity-15 rounded-t-xl w-full p-8 mb-9">
+                    <h1 className="text-6xl text-darkGreen ">Crypto Rate</h1>
+                </div>
+                <div className="bg-gray-50 m-10 mt-8 mb-8 rounded-lg p-4">
+                    <h2 className=" text-lg mb-4">Hot Cryptos</h2>
+                    {cryptos.map((crypto) => (
+                        <CryptoCard
+                            key={crypto.name}
+                            name={crypto.name}
+                            price={crypto.price}
+                            change={crypto.change}
+                            icon={crypto.icon}
+                            changeColor={crypto.changeColor}
+                        />
+                    ))}
+                </div>
+            </div>
+            <Card className="max-w-xl p-0 shadow " theme={{
+                root: {
+                    children: 'p-0 w-[500px]'
+                }
+            }}>
+                <Tabs aria-label="Default tabs" className="p-0 gap-0 justify-center border-b-0 " style={'default'} theme={tabsTheme}>
+                    <Tabs.Item active={true} title="Buy" icon={HiUserCircle} className="text-white ">
+                        <CoinTransfer setPrices={setPrices} prices={prices} />
+                    </Tabs.Item>
+                    <Tabs.Item title="Sell (Comming Soon)" icon={MdDashboard} disabled/>
+                </Tabs>
+            </Card>
+            
+        </div>
     );
 }
 
@@ -154,9 +188,9 @@ const CoinTransfer: React.FC<CoinTransferProps> = ({ setPrices, prices }) => {
 
         <form className="w-full mx-auto ">
             <div className="space-x-0 space-y-4 rtl:space-x-reverse flex items-center flex-col mb-4">
-                <div className="flex relative sm:h-16 sm:w-2/3">
+                <div className="flex relative sm:h-16 w-full">
                     <div className="relative w-full sm:h-full">
-                        <input type="number" onChange={handleAmountChange} value={amountToBuy} id="fiat-currency-input" className="block p-2.5 sm:h-full w-full z-20 text-sm sm:text-xl text-gray-900 bg-gray-50 rounded-s-lg border-e-gray-50 border-e-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-e-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Enter amount" />
+                        <input type="number" onChange={handleAmountChange} value={amountToBuy} id="fiat-currency-input" className="block p-2.5 sm:h-full w-full z-20 text-sm sm:text-2xl text-gray-900 bg-gray-50 rounded-s-lg border-e-gray-50 border-e-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-e-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="Enter amount" />
                     </div>
                     <button id="dropdown-fiat-currency-button" type="button" onClick={(e) => toggleDropdown(e as any)}  className="flex-shrink-0  z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-e-lg hover:bg-gray-200  dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600" >
                         {selectedCoin?.icon}
@@ -184,9 +218,9 @@ const CoinTransfer: React.FC<CoinTransferProps> = ({ setPrices, prices }) => {
                     <FaArrowDown/>
                     <span className="sr-only">Convert currency</span>
                 </button>
-                <div className="flex sm:h-16 sm:w-2/3">
+                <div className="flex sm:h-16 w-full">
                     <div className="relative w-full sm:h-full">
-                        <input type="number" value={amountInMTR} onChange={handleMTRChange}  id="crypto-input" className="block p-2.5 sm:h-full w-full z-20 text-sm sm:text-xl text-gray-900 bg-gray-50 rounded-s-lg border-e-gray-50 border-e-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-e-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="0.323 MTR" required />
+                        <input type="number" value={amountInMTR} onChange={handleMTRChange}  id="crypto-input" className="block p-2.5 sm:h-full w-full z-20 text-sm sm:text-2xl text-gray-900 bg-gray-50 rounded-s-lg border-e-gray-50 border-e-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-e-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" placeholder="0.323 MTR" required />
                     </div>
                     <button id="dropdown-crypto-button" className="flex-shrink-0 z-0 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-e-lg hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600">
                         <Image src="/images/Metri.png" alt="metri" width={20} height={20} className="me-2.5"/>
@@ -194,29 +228,21 @@ const CoinTransfer: React.FC<CoinTransferProps> = ({ setPrices, prices }) => {
                     </button>
                 </div>
             </div>
-             {/* <div className="flex justify-between items-center flex-col sm:flex-row space-y-2 sm:space-y-0">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Last update: 20:45 AM, November 20, 2023</p>
-                <button type="reset" className="text-sm text-blue-700 dark:text-blue-500 inline-flex items-center font-medium hover:underline" disabled>
-                    Refresh <svg className="w-3 h-3 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 20">
-                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"/>
-                    </svg>
-                </button>
-            </div>  */}
         </form>
-        <div className=" space-x-0  rtl:space-x-reverse flex items-center flex-col mb-4 mt-20">
-            <button onClick={() => setOpenModal(true)} className=" text-gray-50  duration-300 relative group cursor-pointer   overflow-hidden h-16 w-48 rounded-md bg-lightGreen opacity-90 p-2  font-extrabold hover:bg-orange">
-                <div className="absolute justify-center items-center flex group-hover:-top-1 group-hover:-right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150  duration-700 right-12 top-12 bg-[#268f8f] opacity-40">
+        <div className=" space-x-0  rtl:space-x-reverse flex items-center flex-col mb-4 mt-52">
+            <button onClick={() => setOpenModal(true)} className=" text-gray-50  duration-300 relative group cursor-pointer hover:text-darkGreen   overflow-hidden h-16 w-48 rounded-md bg-darkGreen bg-opacity-95 p-2  font-extrabold hover:bg-orange">
+                <div className="absolute justify-center items-center flex group-hover:-top-1 group-hover:-right-2 z-10 w-16 h-16 rounded-full group-hover:scale-150  duration-700 right-12 top-12 bg-darkGreen opacity-40">
                     <CiBank/>
                 </div>
                 <div className="absolute  group-hover:-top-1 group-hover:-right-2 z-10 w-12 h-12 rounded-full group-hover:scale-150  duration-700 right-20 -top-6 bg-orange-500">
                 </div>
-                <div className="absolute justify-center items-center flex group-hover:-top-1 group-hover:-right-2 z-10 w-8 h-8   rounded-full group-hover:scale-150  duration-700 right-32 top-1 bg-[#268f8f] opacity-70">
+                <div className="absolute justify-center items-center flex group-hover:-top-1 group-hover:-right-2 z-10 w-8 h-8   rounded-full group-hover:scale-150  duration-700 right-32 top-1 bg-darkGreen opacity-70">
                     <TbCurrencySolana/>
                 </div>
-                <div className="absolute justify-center items-center flex group-hover:-top-1 group-hover:-right-2 z-10 w-5 h-5   rounded-full group-hover:scale-150  duration-700 right-2 top-12 bg-[#268f8f] ">
+                <div className="absolute justify-center items-center flex group-hover:-top-1 group-hover:-right-2 z-10 w-5 h-5   rounded-full group-hover:scale-150  duration-700 right-2 top-12 bg-darkGreen ">
                     <TbCurrencyBitcoin/>
                 </div>
-                <p className="z-10 absolute bottom-2 left-2" >Buy Metri</p>
+                <p className="z-10 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" >Buy Metri</p>
             </button>
         </div>
         <BuyModal currentMTRPriceinUsd={currentMTRPriceinUsd} openModal={openModal} setOpenModal={setOpenModal} amountInMTR={amountInMTR} selectedCoin={selectedCoin} amountToBuy={amountToBuy} />
@@ -236,61 +262,26 @@ interface BuyModalProps {
 }
 
 const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, amountInMTR, selectedCoin, amountToBuy, currentMTRPriceinUsd}) => {
-    const startMinutes = 1;
-    const startSeconds = 0;
+
     enum typeOfPaymentEnum {
-        BANK = 'bank',
-        BTC = 'btc',
-        SOL = 'sol',
-        ETH = 'eth',
-        BNB = 'bnb'
+        BANK = 'BANK',
+        BTC = 'BTC',
+        SOL = 'SOL',
+        ETH = 'ETH',
+        BNB = 'BNB'
+    }
+    enum walletAddressEnum {
+        BANK = 'BANK',
+        BTC = '0x0',
+        SOL = '0x0',
+        ETH = '0x0',
+        BNB = '0xfbb14cc8166f2ad09bbd684486a31e5c417675e4'
     }
     const [modalPlacement, setModalPlacement] = useState<ModalProps['position']>('center')
     const [typeOfPayment, setTypeOfPayment] = useState<typeOfPaymentEnum | undefined>()
     const [amountInCurrencySelected, setAmountInCurrencySelected] = useState<number>(0)
     const [showDetails, setShowDetails] = useState<boolean>(false)
-    /* const [counterMinutes, setCounterMinutes] = useState<number>(5)
-    const [counterSeconds, setCounterSeconds] = useState<number>(0) */
-    /* const [time, setTime] = useState({
-        minutes: startMinutes,
-        seconds: startSeconds,
-    });
-
-    useEffect(() => {
-        if (openModal) {
-            setTime({ minutes: startMinutes, seconds: startSeconds });
-        }
-    }, [openModal]); */
-
-    /* const startCountDown = useCallback(() => {
-        const timer = setInterval(() => {
-            setTime(prevTime => {
-                let { minutes, seconds } = prevTime;
-                seconds--;
-                if (seconds < 0) {
-                    minutes--;
-                    seconds = 59;
-                }
-                if (minutes < 0) {
-                    clearInterval(timer);
-                    return { minutes: 0, seconds: 0 };
-                }
-                return { minutes, seconds };
-            });
-        }, 1000);
-        return () => clearInterval(timer);
-    }, []); */
-
-    /* useEffect(() => {
-        let timer: () => void;
-        if (openModal) {
-            timer = startCountDown();
-        }
-        console.log('timer', timer)
-        return () => {
-            if (timer) timer();
-        }
-    }, [openModal, startCountDown]); */
+    const [qrCode, setQrCode] = useState<string>()
 
     function calculateMtrToTypeOfPaymentSelected(mtrAmount: number, mtrToUsdRate: number, typeOfPaymentRateInUsd: number) {
         const usdAmount = mtrAmount * mtrToUsdRate;
@@ -326,41 +317,61 @@ const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, amountInMTR
                     break;
             }
             setAmountInCurrencySelected(amount);
+            return amount;
 /*             startCountDown();
  */        } catch (error) {
             console.error('Failed to fetch data', error);
         }
     }, [amountInMTR, currentMTRPriceinUsd, typeOfPayment, typeOfPaymentEnum.BNB, typeOfPaymentEnum.BTC, typeOfPaymentEnum.ETH]); // Add an empty array as the second argument to useCallback
 
-    const handdleShowDetails = () => {
+    const handdleShowDetails = async () => {
         if (typeOfPayment) {
             setShowDetails(true);
-            fetchPrices();
+            const amountIntypeOfPayment = await fetchPrices();
+            if (!amountIntypeOfPayment) return; //TODO ERROR HANDLER 
+            const createPaymentProps: CreatePaymentParams = {
+                payment: {
+                    crypto_type: typeOfPayment,
+                    amount: amountIntypeOfPayment,
+                    metri_equivalent: Number(amountInMTR),
+                    blockchain: typeOfPayment,
+                    wallet_address: walletAddressEnum[typeOfPayment],
+                }
+            }
+            const reportPayment = await createPayment(createPaymentProps)
+            if (reportPayment.data)
+            setQrCode(reportPayment.data?.qr_code_svg)
             return
         }
     }
 
+    const finishPurchase = async () => {
+        setShowDetails(false)
+        setOpenModal(false)
+    }
+
     const handlePaymentType = (type: typeOfPaymentEnum) => {
         setTypeOfPayment(type)
+        
     }
 
     return (
         <Modal
-        show={openModal}
-        position={modalPlacement}
-        size={'md'}
-        theme={{
-            root: {
-                show: {
-                    on: "flex bg-gray-900 bg-opacity-50 dark:bg-opacity-80",
+            show={openModal}
+            position={modalPlacement}
+            size={'md'}
+            theme={{
+                root: {
+                    show: {
+                        on: "flex bg-gray-900 bg-opacity-50 dark:bg-opacity-80",
+                    }
+                },
+                content: {
+                    inner: 'relative flex max-h-[95dvh] flex-col rounded-lg bg-white shadow dark:bg-gray-700'
                 }
-            },
-            content: {
-                inner: 'relative flex max-h-[95dvh] flex-col rounded-lg bg-white shadow dark:bg-gray-700'
-            }
-        }}
-        onClose={() => setOpenModal(false)}
-    >
+            }}
+            onClose={() => setOpenModal(false)}
+        >
         <Modal.Header>
           <h2 className="text-lg font-semibold">{showDetails? 'Payment Details' : 'Choose Payment Method'}</h2>
         </Modal.Header>
@@ -386,7 +397,16 @@ const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, amountInMTR
                                 <p>{amountInCurrencySelected}</p>
                             </div>
 
-                            <Image src={'/images/qr/bnb.svg'} alt="qr code" width={200} height={200} className="flex self-center"/>
+                            {qrCode && <div dangerouslySetInnerHTML={{__html: qrCode}} className="flex justify-center"></div>}
+                            {typeOfPayment && (
+                                <>
+                                    <CopyToClipboard text={walletAddressEnum[typeOfPayment]} >
+                                        <span className="group cursor-pointer">
+                                            {walletAddressEnum[typeOfPayment]}
+                                        </span>
+                                    </CopyToClipboard>
+                                </>
+                            )}
                             
                             {/* <div className="flex items-center justify-cente</div>r w-full gap-1.5 count-down-main">
                                 <div className="timer">
@@ -437,7 +457,7 @@ const BuyModal: React.FC<BuyModalProps> = ({openModal, setOpenModal, amountInMTR
         </div>
         </Modal.Body>
         <Modal.Footer>
-          <button disabled={typeOfPayment === undefined} onClick={handdleShowDetails} className="bg-orange disabled:opacity-80 disabled:cursor-not-allowed w-full items-center appearance-none border-b-gray-800 rounded-bl-lg rounded-br-lg border-l-gray-800 border-l-0 border-r-gray-800 border-r-0 border-t-gray-800 rounded-tl-lg rounded-tr-lg box-border text-gray-800 space-x-1.5 cursor-pointer flex text-base font-medium h-12 justify-center leading-6 mb-0 ml-0 mr-0 mt-0 min-h-12 min-w-20 outline-none overflow-x-hidden overflow-y-hidden pb-0 pl-4 pr-4 pt-0 space-y-1.5 text-center no-underline overflow-ellipsis whitespace-nowrap select-none break-all">
+          <button disabled={typeOfPayment === undefined} onClick={ showDetails ? finishPurchase : handdleShowDetails} className="bg-orange disabled:opacity-80 disabled:cursor-not-allowed w-full items-center appearance-none border-b-gray-800 rounded-bl-lg rounded-br-lg border-l-gray-800 border-l-0 border-r-gray-800 border-r-0 border-t-gray-800 rounded-tl-lg rounded-tr-lg box-border text-gray-800 space-x-1.5 cursor-pointer flex text-base font-medium h-12 justify-center leading-6 mb-0 ml-0 mr-0 mt-0 min-h-12 min-w-20 outline-none overflow-x-hidden overflow-y-hidden pb-0 pl-4 pr-4 pt-0 space-y-1.5 text-center no-underline overflow-ellipsis whitespace-nowrap select-none break-all">
             Confirm
           </button>
         </Modal.Footer>

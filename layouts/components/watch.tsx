@@ -17,7 +17,7 @@ const watchComponent: React.FC<watchComponentProps> = ({userData, exchangeRate})
                     <div className="group-hover:duration-300 hover:opacity-100  opacity-0 before:absolute before:w-12 before:h-12 before:bg-[#0AA8A7] before:rounded-full before:blur-xl before:top-16 relative   flex flex-col justify-around items-center w-44 h-40 bg-[#212121] text-gray-50">
                         { userData ? (<>
                             <span className="font-bold text-sm" >{userData.user.email}</span>
-                            <span className="z-10 flex items-center text-3xl text-[#fff] justify-center">{userData.balance} <span className='text-xs ml-2'>MTR</span></span>
+                            <span className="z-10 flex items-center text-3xl text-[#fff] justify-center">{Number(userData.balance).toFixed(7)} <span className='text-xs ml-2'>MTR</span></span>
                             <div className="text-gray-50 w-48 flex flex-row justify-evenly">
                             <span className="text-x</div>s font-bold">={(Math.max(exchangeRate * userData.balance)).toFixed(2)} usd</span>
                             <div className="flex flex-row items-center">
