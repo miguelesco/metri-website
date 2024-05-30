@@ -1,23 +1,37 @@
 import { useCallback, useEffect, useState } from "react"
 import config from "@config/config.json";
 import { FaDollarSign } from "react-icons/fa";
-import { HiArrowSmRight, HiCalendar, HiChartPie } from 'react-icons/hi';
+import { HiCalendar, HiChartPie } from 'react-icons/hi';
+import { MdLogout } from "react-icons/md";
 import router, { useRouter } from "next/router";
 import React from "react";
 import Image from "next/image";
 import { checkSession } from "@lib/utils/API/checkSession";
+import { logoutUser } from "@lib/utils/API/user";
 
 export default function SidebarComponent({ children }: { children: React.ReactNode }) {
 
     const [menuOpen, setMenuOpen] = useState(false)
     const [menu1, setMenu1] = useState(false)
     const [balance, setBalance] = useState(null);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>();
     const router = useRouter();
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>, href: string) => {
       e.preventDefault()
       router.push(href)
+    }
+
+    const logout = async (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      const response = await logoutUser();
+  
+      if (response.data) {
+        router.push('/login');
+        localStorage.removeItem('jwt');
+      } else {
+        setError(response.error);
+      }
     }
 
     const checkUserSession = useCallback(async () => {
@@ -36,7 +50,7 @@ export default function SidebarComponent({ children }: { children: React.ReactNo
 
     const [menuItems, setMenuItems] = useState<{ title: string, url: string, icon: React.FC<React.SVGProps<SVGSVGElement>> }[]>([
       { title: "Dashboard", url: '/dashboard', icon: HiChartPie },
-      { title: "Buy Metri", url: 'dashboard/buy', icon: FaDollarSign },
+      { title: "Buy Metri", url: '/dashboard/buy', icon: FaDollarSign },
     ]);
 
     const [menuDropdownItems, setMenuDropdownItems] = useState<{ title: string, open: boolean, elements: {title: string, url: string, icon: React.FC<React.SVGProps<SVGSVGElement>> | undefined }[] }[]>([
@@ -120,18 +134,18 @@ export default function SidebarComponent({ children }: { children: React.ReactNo
                 </button>
               </div>
             </div>
-            <div id="Main" className={`xl:rounded-r transform  ease-in-out transition duration-500 flex justify-start items-start h-full  w-full sm:w-64 bg-[#033434] flex-col ${ menuOpen ? 'xl:translate-x-64' : 'xl:translate-x-0'}`}>
+            <div id="Main" className={`xl:rounded-r relative transform  ease-in-out transition duration-500 flex justify-start items-start h-full  w-full sm:w-64 bg-[#033434] flex-col ${ menuOpen ? 'xl:translate-x-64' : 'xl:translate-x-0'}`}>
 
               <div className="hidden xl:flex justify-start p-6 items-center space-x-3">
                 <Image src={logo} alt="logo" width={30} height={30} />
                 <p className="text-2xl leading-6 text-white">{title}</p>
               </div>
-              <div className="mt-6 flex flex-col justify-start items-center  pl-4 w-full border-gray-600 border-b space-y-3 pb-5 ">
+              <div className="mt-6 flex flex-col justify-start items-center  pl-4 w-full gap-2 border-gray-600 border-b space-y-3 pb-5 ">
                 {
                   menuItems.map((item, index) => (
                     <button key={index} onClick={(e) => handleClick(e, item.url)} className="flex jusitfy-start items-center w-full  space-x-6 focus:outline-none text-white focus:text-indigo-400   rounded ">
                       {item.icon && <item.icon className={`fill-stroke w-6 h-6`} />}
-                      <p className="text-base leading-4 ">{item.title}</p>
+                      <p className="text-xl leading-4 ">{item.title}</p>
                     </button>
                   ))
                 }
@@ -158,6 +172,12 @@ export default function SidebarComponent({ children }: { children: React.ReactNo
                   </div>
                 ))
               }
+              <div className="mt-6 flex flex-col justify-start items-center  pl-4 w-full gap-2 border-gray-600 border-b space-y-3 pb-5 absolute bottom-0 ">
+                <button key={'4'} onClick={(e) => logout(e)} className="flex jusitfy-start items-center w-full   space-x-6 focus:outline-none text-white focus:text-indigo-400   rounded ">
+                    <MdLogout className={`fill-stroke w-6 h-6`} />
+                  <p className="text-xl leading-4 ">logout</p>
+                </button>
+              </div>
             </div>
           </div>
          </aside>

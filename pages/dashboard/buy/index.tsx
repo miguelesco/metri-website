@@ -85,8 +85,8 @@ const cryptos = [
   ];
 
     return (
-        <div className=" min-h-screen flex justify-evenly items-center">
-            <div className=" rounded-lg w-[500px] shadow border border-gray-200">
+        <div className=" min-h-screen flex justify-evenly items-center flex-wrap gap-5">
+            <div className=" rounded-lg sm:w-[500px] shadow border border-gray-200">
                 <div className="bg-white border-b-2 border-darkGreen border-opacity-15 rounded-t-xl w-full p-8 mb-9">
                     <h1 className="text-6xl text-darkGreen ">Crypto Rate</h1>
                 </div>
@@ -106,14 +106,14 @@ const cryptos = [
             </div>
             <Card className="max-w-xl p-0 shadow " theme={{
                 root: {
-                    children: 'p-0 w-[500px]'
+                    children: 'p-0 sm:w-[500px]'
                 }
             }}>
                 <Tabs aria-label="Default tabs" className="p-0 gap-0 justify-center border-b-0 " style={'default'} theme={tabsTheme}>
                     <Tabs.Item active={true} title="Buy" icon={HiUserCircle} className="text-white ">
                         <CoinTransfer setPrices={setPrices} prices={prices} />
                     </Tabs.Item>
-                    <Tabs.Item title="Sell (Comming Soon)" icon={MdDashboard} disabled/>
+                    <Tabs.Item title="Sell (Coming Soon)" icon={MdDashboard} disabled/>
                 </Tabs>
             </Card>
             

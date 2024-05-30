@@ -49,6 +49,10 @@ export interface ILoginResponse {
     user: ICurrentUser
 }
 
+export interface IlogoutResponse {
+    message: string
+}
+
 export interface IHistoryResponse {
     id: number;
     user_id: number;

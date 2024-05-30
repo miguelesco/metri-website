@@ -1,5 +1,5 @@
 import { fetchData } from "../utilities";
-import { DefaultResponse, ICurrentUser, IHistoryResponse, ILoginResponse, LoginParams, RegisterParams } from "../interfaces";
+import { DefaultResponse, ICurrentUser, IHistoryResponse, ILoginResponse, IlogoutResponse, LoginParams, RegisterParams } from "../interfaces";
 
 
 // utils/api.js
@@ -78,6 +78,23 @@ export const getUserHistory = async (): Promise<DefaultResponse<IHistoryResponse
     }
   } catch (error) {
     console.error('Error fetching user history:', error);
+    return { data: null, error: 'An error occurred. Please try again.' };
+  }
+}
+
+export const logoutUser = async (): Promise<DefaultResponse<IlogoutResponse>> => {
+  try {
+    const response = await fetchData<IlogoutResponse>('users/sign_out', 'DELETE');
+    
+  
+    if (!response.error) {
+      const { data } = response;
+      return { data, error: null };
+    } else {
+      return { data: null, error: response.error };
+    }
+  } catch (error) {
+    console.error('Error logging out user:', error);
     return { data: null, error: 'An error occurred. Please try again.' };
   }
 }
